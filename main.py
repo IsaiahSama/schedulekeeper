@@ -93,6 +93,7 @@ class Main:
         prompt = "What would you like to name this schedule?"
         print("What should I call your schedule?")
         name = input(": ")
+        name = name.replace(" ", "-")
         print("Noted")
         while True:
             system("CLS")

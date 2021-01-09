@@ -19,6 +19,7 @@ class Utility:
     @staticmethod
     def verifyNumber(prompt, numrange):
         while True:
+            print(f"Today: {ctime()}")
             print(prompt)
             response = input(": ")
             while not response.isnumeric():
@@ -37,14 +38,13 @@ class Utility:
     # Function which confirms a given input
     @staticmethod
     def verifyResponse(prompt):
-        while True:
-            print(prompt)
-            response = input(": ")
-            prompt = "Are you certain?\n1) Yes\n2) No"
-            confirmation = Utility.verifyNumber(prompt, [1,2])
-            sleep(1)
-            if confirmation == 1: return response
-            else: Utility.clrs()
+        print(prompt)
+        response = input(": ")
+        prompt = "Are you certain?\n1) Yes\n2) No"
+        confirmation = Utility.verifyNumber(prompt, [1,2])
+        sleep(1)
+        if confirmation == 1: return response
+        else: return False
 
     # Function responsible for saving the scheduledict
     @staticmethod
@@ -68,7 +68,6 @@ class Utility:
             dump(mydict, f, indent=4)
 
         print("Opening data in your notepad. Return to me and press enter to proceed")
-        sleep(2)
         system(f"{name}.json")
         input(": ")
         try:
@@ -145,72 +144,43 @@ class Create:
             if not time: print("Invalid time."); sleep(2); continue
             prompt = f"What task would you do at {time}"
             task = Utility.verifyResponse(prompt)
+            if not task: continue
             mydict[time[0]] = task
             prompt = "Would you like to set another task and time?\n\n1)Yes\n\n2)No"
             answer = Utility.verifyNumber(prompt, [1,2])
             if answer == 2: break
-        Utility.save(self.mydict)
 
-# Class responsible for the reading of a schedule
-class Read:
-    def __init__(self, schedule):
-        self.schedule = schedule
+# Class responsible for Reading, Updating and Deleting
 
-    # Function responsible for viewing a weekly schedule
-    def view_weekly(self):
-        mydict = self.schedule["WEEKLY"]
-        self.read("weekly", mydict)
-
-
-    # Function responsible for viewing a daily schedule
-    def view_daily(self):
-        mydict = self.schedule["DAILY"]
-        self.read("daily", mydict)
- 
+class RUD:
+    "READ UPDATE AND DELETE!!!!! Staticly"
 
     # Function responsible for showing data
-    def read(self, mode, mydict):
+    @staticmethod
+    def read(mode, myschedule):
+        mydict = myschedule[mode.upper()]
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
             _, entry = Utility.get_entry(names, mydict)
             if not entry: print("Returning to main menu"); return
 
-
-# CLass responsible for handling all update methods
-class Update:
-    def __init__(self, schedule):
-        self.schedule = schedule
-
-    # Function for updating a daily schedule
-    def update_daily(self):
-        daily_dict = self.schedule["DAILY"]
-        self.update("weekly", daily_dict)
-
-
-    # Function for updating a weekly schedule
-    def update_weekly(self):
-        weekly_dict = self.schedule["WEEKLY"]
-        self.update("weekly", weekly_dict)
-            
-
     # Function responsible for updating
-    def update(self, mode, mydict):
+    @staticmethod
+    def update(mode, myschedule):
+        mydict = myschedule[mode.upper()]
         while True:
             Utility.clrs()
-            if not mydict: print(f"You do not have any {mode} schedules"); return
-            names = Utility.show_names(f"{mode}", mydict)
+            names = Utility.show_names(mode, mydict)
             name, entry = Utility.get_entry(names, mydict, True)
             if not entry: print("Returning to main menu"); sleep(1); return
-            new_entry = self.read_edit(name, entry)
+            new_entry = RUD.read_edit(name, entry)
             if not new_entry: print("Aborted update"); sleep(2); continue
-
-            entry = new_entry
-
-            Utility.save(self.schedule)
+            myschedule[mode.upper()][name] = new_entry
 
     # Function responsible for opening a file, and allowing users to change information
-    def read_edit(self, name, entry):
+    @staticmethod
+    def read_edit(name, entry):
         print("Opening file now. Change the data as you see fit, save and then return to me and press enter.")
         with open(f"{name}.json", "w") as f:
             dump(entry, f, indent=4)
@@ -239,26 +209,13 @@ class Update:
         print("Schedule updated successfully")
         return new_entry
 
-class Delete:
-    def __init__(self, schedule):
-        self.schedule = schedule
-
-    # Function responsible for deleting daily
-    def delete_daily(self):
-        mydict = self.schedule["DAILY"]
-        self.delete("daily", mydict)
-
-    # Function responsible for deleting weekly
-    def delete_weekly(self):
-        mydict = self.schedule["WEEKLY"]
-        self.delete("weekly", mydict)    
-
+    @staticmethod
     # Function responsible for deleting
-    def delete(self, mode, mydict):
+    def delete(mode, myschedule):
+        mydict = myschedule[mode.upper()]
         while True:
             Utility.clrs()
-            if not mydict: print("You do not have any weekly schedules"); return
-            names = Utility.show_names("weekly", mydict)
+            names = Utility.show_names(mode, mydict)
             name, entry = Utility.get_entry(names, mydict, True)
             
             if not entry: print("Returning to main menu"); sleep(1); return
@@ -269,7 +226,6 @@ class Delete:
             if not confirm: print("Cancelling"); sleep(2); continue
 
             print("Deleting")
-            del(entry)
+            del(myschedule[mode.upper()][name])
             print("Deleted")
-            Utility.save(self.schedule)
             sleep(1)   

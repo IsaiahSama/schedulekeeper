@@ -24,13 +24,7 @@
 
 from mechanics import *
 
-dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thur": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
-# Function which returns the long version of the current day
-def currentday(): 
-    return dict_of_days[ctime().split(" ")[0]]
-
-        
 class Main:
     def __init__(self):
         self.mydict = {}
@@ -76,6 +70,7 @@ class Main:
         sleep(2)
         Utility.clrs(f"How May I help you today {self.mydict['USERNAME']}?\n\n")
         prompt = "1)Create A New Schedule\n\n2)View an Existing Schedule\n\n3)Update an Existing Schedule\n\n4)Delete an Existing Schedule\n\n5)Track a Schedule\n\n6)Exit this program\n\n7)Uninstall this program"
+        print(f"Today is {ctime()}")
         response = Utility.verifyNumber(prompt, [1,2,3,4,5,6,7])
 
         if response == 7: self.uninstall()
@@ -147,7 +142,16 @@ class Main:
 
     # Function that handles deleting an existing Schedule
     def track(self):
-        if not self.schedule: print("You have no existing schedules to track."); return    
+        if not self.schedule: print("You have no existing schedules to track."); return   
+
+        while True:
+
+            Utility.clrs("Would you like to track a daily or weekly schedule?")
+            prompt = "\n1)track Daily\n2)track Weekly\n3)Return to menu"
+            response = Utility.verifyNumber(prompt, [1,2,3])
+            if response == 3: print("Returning to menu"); return
+            if response == 2: RUD.track("weekly", self.schedule)
+            if response == 1: RUD.track("daily", self.schedule)         
 
     # Function that closes the program
     def close(self):
@@ -174,7 +178,11 @@ class Main:
             remove(__file__)
             if path.exists("mechanics.py"): remove("mechanics.py")
             print("Succesfully deleted everything relating to me. Tru goodbye")
+        
+        rmdir("C:\\ScheduleKeeper")
+
         self.close()
+
 
 
 main = Main()

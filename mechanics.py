@@ -2,6 +2,11 @@ from os import system, path, mkdir, remove, rmdir, listdir
 from time import sleep, ctime
 from json import dump, load, JSONDecodeError
 from re import findall
+from threading import Thread
+
+
+# Dict of days
+dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thur": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
 
 # Classes
@@ -80,7 +85,7 @@ class Utility:
 
     # Function that gets requested dictionary entry
     @staticmethod
-    def get_entry(keys, mydict, edit=False):
+    def get_entry(keys, mydict, show=True):
         system("CLS")
         while True:
             system("CLS")
@@ -98,11 +103,30 @@ class Utility:
                     Utility.clrs(f"Something went wrong getting the schedule {answer}")
                     continue
         
-        if not edit:
+        if show:
             Utility.clrs(f"Showing your schedule with the name {answer}")
             Utility.show_data(answer, mydict[answer])
 
         return answer, mydict[answer]
+
+
+    # Function which returns the long version of the current day
+    @staticmethod
+    def currentday(): 
+        return dict_of_days[ctime().split(" ")[0]]
+
+    @staticmethod
+    def currenttime():
+        return findall(r"([0-2][0-9]:[0-5][0-9])", ctime())[0]
+
+    @staticmethod
+    def get_minutes(time=None):
+        if not time:
+            value = Utility.currenttime()
+        else:
+            value = time
+        hours, minutes = int(value.split(":")[0]), int(value.split(":")[1])
+        return (hours * 60) + minutes
 
     
 
@@ -140,7 +164,7 @@ class Create:
         while True:
             Utility.clrs("Give me the time for the task in 24 hour format (02:00, 14:00)")
             time = input(": ")
-            time = findall(r"([0-9][0-9]:[0-9][0-9])", time)
+            time = findall(r"([0-2][0-9]:[0-5][0-9])", time)
             if not time: print("Invalid time."); sleep(2); continue
             prompt = f"What task would you do at {time}"
             task = Utility.verifyResponse(prompt)
@@ -172,7 +196,7 @@ class RUD:
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
-            name, entry = Utility.get_entry(names, mydict, True)
+            name, entry = Utility.get_entry(names, mydict, False)
             if not entry: print("Returning to main menu"); sleep(1); return
             new_entry = RUD.read_edit(name, entry)
             if not new_entry: print("Aborted update"); sleep(2); continue
@@ -209,14 +233,14 @@ class RUD:
         print("Schedule updated successfully")
         return new_entry
 
-    @staticmethod
     # Function responsible for deleting
+    @staticmethod
     def delete(mode, myschedule):
         mydict = myschedule[mode.upper()]
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
-            name, entry = Utility.get_entry(names, mydict, True)
+            name, entry = Utility.get_entry(names, mydict)
             
             if not entry: print("Returning to main menu"); sleep(1); return
 
@@ -229,3 +253,56 @@ class RUD:
             del(myschedule[mode.upper()][name])
             print("Deleted")
             sleep(1)   
+
+    # Function responsible for tracking a task
+    @staticmethod
+    def track(mode, myschedule):
+        mydict = myschedule[mode.upper()]
+        Utility.clrs()
+        names = Utility.show_names(mode, mydict)
+        name, entry = Utility.get_entry(names, mydict, False)
+        if not entry: print("Returning to main menu"); sleep(1); return 
+        if mode == "weekly":
+            entry = entry[Utility.currentday()]
+        print(f"I will now track your {mode} schedule {name}, If no longer using the program, feel free to minimize the window while I keep track")
+        thread = Thread(target=RUD.tracker, args=(name, mode, entry), daemon=True)
+        thread.start()
+        sleep(2)
+        
+
+    @staticmethod
+    def tracker(name, mode, mydict):
+        sleep(2)
+        print(f"Tracking your {mode} schedule of {name}")
+        min_dict = {}
+        min_list = []
+
+        for k in mydict.keys():
+            minutes = Utility.get_minutes(k)
+            min_dict[minutes] = k
+            min_list.append(minutes)
+
+        terminator = sorted(min_list)[-1]
+
+        while Utility.get_minutes() != (terminator + 20):
+
+            sleep(40)
+
+            try:
+                todo = mydict[min_dict[Utility.get_minutes()]]
+            except KeyError:
+                continue
+
+            with open(f"{name}.txt", "w") as f:
+                f.write(f"The time is now {[min_dict[Utility.get_minutes()]]}. Time for you to...\n\n {todo}")
+
+            system(f"{name}.txt")
+
+        try:
+            remove(f"{name.txt}")
+        except FileNotFoundError:
+            pass
+
+        print(f"Tracking for {name} has been completed succesfully...")
+        sleep(2)
+        

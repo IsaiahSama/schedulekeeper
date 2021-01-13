@@ -174,12 +174,13 @@ class Main:
                 remove(f"C:\\ScheduleKeeper\\{file}")
                 print(f"Deleted {file}.")
 
+            rmdir("C:\\ScheduleKeeper")
+
         if full:
             remove(__file__)
             if path.exists("mechanics.py"): remove("mechanics.py")
             print("Succesfully deleted everything relating to me. Tru goodbye")
         
-        rmdir("C:\\ScheduleKeeper")
 
         self.close()
 

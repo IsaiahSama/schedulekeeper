@@ -24,7 +24,6 @@ class Utility:
     @staticmethod
     def verifyNumber(prompt, numrange):
         while True:
-            print(f"Today: {ctime()}")
             print(prompt)
             response = input(": ")
             while not response.isnumeric():

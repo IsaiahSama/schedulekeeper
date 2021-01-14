@@ -70,7 +70,8 @@ class Main:
         sleep(2)
         Utility.clrs(f"How May I help you today {self.mydict['USERNAME']}?\n\n")
         prompt = "1)Create A New Schedule\n\n2)View an Existing Schedule\n\n3)Update an Existing Schedule\n\n4)Delete an Existing Schedule\n\n5)Track a Schedule\n\n6)Exit this program\n\n7)Uninstall this program"
-        print(f"Today is {ctime()}")
+        print(f"Today is {ctime()}\n")
+        
         response = Utility.verifyNumber(prompt, [1,2,3,4,5,6,7])
 
         if response == 7: self.uninstall()

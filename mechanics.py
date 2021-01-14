@@ -3,10 +3,11 @@ from time import sleep, ctime
 from json import dump, load, JSONDecodeError
 from re import findall
 from threading import Thread
+from win10toast import ToastNotifier
 
 
 # Dict of days
-dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thur": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
+dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
 
 # Classes
@@ -275,6 +276,7 @@ class RUD:
         print(f"Tracking your {mode} schedule of {name}")
         min_dict = {}
         min_list = []
+        toaster = ToastNotifier()
 
         for k in mydict.keys():
             minutes = Utility.get_minutes(k)
@@ -292,15 +294,8 @@ class RUD:
             except KeyError:
                 continue
 
-            with open(f"{name}.txt", "w") as f:
-                f.write(f"The time is now {[min_dict[Utility.get_minutes()]]}. Time for you to...\n\n {todo}")
+            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", duration=120)
 
-            system(f"{name}.txt")
-
-        try:
-            remove(f"{name.txt}")
-        except FileNotFoundError:
-            pass
 
         print(f"Tracking for {name} has been completed succesfully...")
         sleep(2)

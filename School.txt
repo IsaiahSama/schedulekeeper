@@ -1,0 +1,3 @@
+The time is now ['12:00']. Time for you to...
+
+ Registration for courses

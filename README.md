@@ -28,4 +28,8 @@ Deletes a specified schedule.
 
 ## Track
 
-A key factor in this program. Capable of tracking multiple schedules at once. When the time specified in the schedule has come, for now, will open your default text editor making it the primary focus which will contain the current time along with the task you have to do. Tracking runs until 20 minutes after the last task for the day at which point all created files will be removed.
+A key factor in this program. Capable of tracking multiple schedules at once. When the time specified in the schedule has come, you will receive a notification stating the current task.
+
+## End Note
+
+I really hope that this program helps some of you out. Took a bit in order to get it done and I'm fairly happy with how it came out. I'm open to any suggestions.

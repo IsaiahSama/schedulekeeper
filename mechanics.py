@@ -273,11 +273,11 @@ class RUD:
     @staticmethod
     def tracker(name, mode, mydict):
         sleep(2)
-        print(f"Tracking your {mode} schedule of {name}")
         min_dict = {}
         min_list = []
         toaster = ToastNotifier()
 
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {mode} schedule of {name}", threaded=True, duration=10)
         for k in mydict.keys():
             minutes = Utility.get_minutes(k)
             min_dict[minutes] = k
@@ -298,6 +298,6 @@ class RUD:
             while toaster.notification_active():sleep(0.1)
 
 
-        print(f"Tracking for {name} has been completed succesfully...")
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)
         sleep(2)
         

@@ -244,10 +244,10 @@ class RUD:
             
             if not entry: print("Returning to main menu"); sleep(1); return
 
-            prompt = f"Are you sure you want to delete {name}"
+            prompt = f"Are you sure you want to delete {name}\n1)Yes\n2)No"
 
-            confirm = Utility.verifyResponse(prompt)
-            if not confirm: print("Cancelling"); sleep(2); continue
+            confirm = Utility.verifyNumber(prompt, [1,2])
+            if confirm == 2: print("Cancelling"); sleep(2); continue
 
             print("Deleting")
             del(myschedule[mode.upper()][name])

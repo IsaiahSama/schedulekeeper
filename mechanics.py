@@ -294,7 +294,8 @@ class RUD:
             except KeyError:
                 continue
 
-            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", duration=120)
+            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=20)
+            while toaster.notification_active():sleep(0.1)
 
 
         print(f"Tracking for {name} has been completed succesfully...")

@@ -85,74 +85,98 @@ class Main:
 
     # Function that handles creation of a new schedule
     def create(self):
-        print("Creating new schedule...")
-        prompt = "What would you like to name this schedule?"
-        print("What should I call your schedule?")
-        name = input(": ")
-        name = name.replace(" ", "-")
-        print("Noted")
-        while True:
-            system("CLS")
-            print("What would you like to do next")
-            prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Return to menu"
-            answer = Utility.verifyNumber(prompt, [1,2,3])
-            if answer == 3: return
-            create = Create(name.capitalize(), self.schedule)
-            if answer == 2: create.create_weekly()
-            if answer == 1: create.create_daily()
+        try:
+
+            print("Creating new schedule...")
+            prompt = "What would you like to name this schedule?"
+            print("What should I call your schedule?")
+            name = input(": ")
+            name = name.replace(" ", "-")
+            print("Noted")
+            while True:
+                system("CLS")
+                print("What would you like to do next")
+                prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Return to menu"
+                answer = Utility.verifyNumber(prompt, [1,2,3])
+                if answer == 3: return
+                create = Create(name.capitalize(), self.schedule)
+                if answer == 2: create.create_weekly()
+                if answer == 1: create.create_daily()
+        
+        except KeyboardInterrupt:
+            print("Returning to main menu")
+            return
 
     # Function that handles viewing an existing schedule
     def view(self):
         if not self.schedule: print("You have no existing schedules to view."); return
 
-        while True:
+        try:
+            while True:
 
-            Utility.clrs("Would you like to view a daily or weekly schedule?")
-            prompt = "\n1)View Daily\n2)View Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.read("weekly", self.schedule)
-            if response == 1: RUD.read("daily", self.schedule)
+                Utility.clrs("Would you like to view a daily or weekly schedule?")
+                prompt = "\n1)View Daily\n2)View Weekly\n3)Return to menu"
+                response = Utility.verifyNumber(prompt, [1,2,3])
+                if response == 3: print("Returning to menu"); return
+                if response == 2: RUD.read("weekly", self.schedule)
+                if response == 1: RUD.read("daily", self.schedule)
 
+        except KeyboardInterrupt:
+            print("Returning to main menu")
+            return
 
     # Function that handles updating an existing schedule
     def update(self):
         if not self.schedule: print("You have no existing schedules to update."); return
 
-        while True:
+        try:
+            while True:
 
-            Utility.clrs("Would you like to update a daily or weekly schedule?")
-            prompt = "\n1)Update Daily\n2)Update Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.update("weekly", self.schedule)
-            if response == 1: RUD.update("daily", self.schedule)
+                Utility.clrs("Would you like to update a daily or weekly schedule?")
+                prompt = "\n1)Update Daily\n2)Update Weekly\n3)Return to menu"
+                response = Utility.verifyNumber(prompt, [1,2,3])
+                if response == 3: print("Returning to menu"); return
+                if response == 2: RUD.update("weekly", self.schedule)
+                if response == 1: RUD.update("daily", self.schedule)
+
+        except KeyboardInterrupt:
+            print("Returning to main menu")
+            return
 
     # Function that handles deleting an existing schedule
     def delete(self):
         if not self.schedule: print("You have no existing schedules to delete."); return
 
-        while True:
+        try:
+            while True:
 
-            Utility.clrs("Would you like to delete a daily or weekly schedule?")
-            prompt = "\n1)Delete Daily\n2)Delete Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.delete("weekly", self.schedule)
-            if response == 1: RUD.delete("daily", self.schedule)
+                Utility.clrs("Would you like to delete a daily or weekly schedule?")
+                prompt = "\n1)Delete Daily\n2)Delete Weekly\n3)Return to menu"
+                response = Utility.verifyNumber(prompt, [1,2,3])
+                if response == 3: print("Returning to menu"); return
+                if response == 2: RUD.delete("weekly", self.schedule)
+                if response == 1: RUD.delete("daily", self.schedule)
 
+        except KeyboardInterrupt:
+            print("Returning to main menu")
+            return
     # Function that handles deleting an existing Schedule
     def track(self):
         if not self.schedule: print("You have no existing schedules to track."); return   
 
-        while True:
+        try:
+            while True:
 
-            Utility.clrs("Would you like to track a daily or weekly schedule?")
-            prompt = "\n1)track Daily\n2)track Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.track("weekly", self.schedule)
-            if response == 1: RUD.track("daily", self.schedule)         
+                Utility.clrs("Would you like to track a daily or weekly schedule?")
+                prompt = "\n1)track Daily\n2)track Weekly\n3)Return to menu"
+                response = Utility.verifyNumber(prompt, [1,2,3])
+                if response == 3: print("Returning to menu"); return
+                if response == 2: RUD.track("weekly", self.schedule)
+                if response == 1: RUD.track("daily", self.schedule)  
+
+        except KeyboardInterrupt:
+            print("Returning to menu")
+            return       
 
     # Function that closes the program
     def close(self):

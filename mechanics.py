@@ -278,6 +278,7 @@ class RUD:
         toaster = ToastNotifier()
 
         toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {mode} schedule of {name}", threaded=True, duration=10)
+        while toaster.notification_active():sleep(0.1)
         for k in mydict.keys():
             minutes = Utility.get_minutes(k)
             min_dict[minutes] = k
@@ -299,5 +300,6 @@ class RUD:
 
 
         toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)
+        while toaster.notification_active():sleep(0.1)
         sleep(2)
         

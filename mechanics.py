@@ -288,8 +288,6 @@ class RUD:
 
         while Utility.get_minutes() != (terminator + 20):
 
-            sleep(40)
-
             try:
                 todo = mydict[min_dict[Utility.get_minutes()]]
             except KeyError:
@@ -297,6 +295,8 @@ class RUD:
 
             toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=20)
             while toaster.notification_active():sleep(0.1)
+
+            sleep(40)
 
 
         toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)

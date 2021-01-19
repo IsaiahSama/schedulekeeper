@@ -9,7 +9,6 @@ from win10toast import ToastNotifier
 # Dict of days
 dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
-
 # Classes
 
 class Utility:
@@ -142,14 +141,18 @@ class Create:
         dotw = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         Utility.clrs("Creating Weekly Schedule")
         self.mydict["WEEKLY"][self.name] = {}
-        for day in dotw:
-            self.mydict["WEEKLY"][self.name][day] = {}
-            prompt = f"Would you like to create a schedule for {day}?\n\n1)Yes\n\n2)No\n\n3)Return to menu"
-            answer = Utility.verifyNumber(prompt, [1,2,3])
-            if answer == 3: return True
-            if answer == 2: continue
-            x = self.mydict["WEEKLY"][self.name][day]
-            if answer == 1: self.set_times(x)
+
+        try:
+            while True:
+                print("Press ctrl + c when you are finished")
+                print("\nWhat is the day for which you would like to create a schedule for?")
+                day = input(": ").capitalize()
+                if day not in dotw: print("That is not a valid day..."); sleep(2); system("CLS"); continue
+                self.set_times(self.mydict["WEEKLY"][self.name][day])
+
+        except KeyboardInterrupt:
+            print("Completed... Returning to main menu")
+
 
     # Function responsible for creating a daily schedule
     def create_daily(self):

@@ -25,7 +25,8 @@ In this mode, user will be prompted to enter times in 24 hour format (02:30, 14:
 
 ### Weekly
 
-In this mode, each day of the week will be looped through, user will be prompted to enter times in 24 hour format (2:30, 14:30), then the task for the entered time for the day specified.
+In this mode, user can enter the day of the week for which they wish to set a schedule for. After selecting a day, user will be prompted to enter time in 24 hour format (02:30, 14:30), then prompted to enter the task for that time. Afterwards, user can choose if they want to add a schedule for another day or not.
+
 
 ## Read
 

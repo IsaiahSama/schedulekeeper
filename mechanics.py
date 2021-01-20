@@ -1,9 +1,17 @@
-from os import system, path, mkdir, remove, rmdir, listdir
+from os import system, remove
 from time import sleep, ctime
 from json import dump, load, JSONDecodeError
 from re import findall
 from threading import Thread
 from win10toast import ToastNotifier
+import pyttsx3
+
+toaster = ToastNotifier()
+
+engine = pyttsx3.init()
+
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id) 
 
 
 # Dict of days
@@ -128,7 +136,13 @@ class Utility:
         return (hours * 60) + minutes
 
     
+    @staticmethod
+    def send_notif(msg):
+        toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
+        engine.say(msg)
+        engine.runAndWait()
 
+    
 # Class handling creation of schedules
 class Create:
     def __init__(self, name, mydict):
@@ -288,8 +302,8 @@ class Tracking:
 
         toaster = ToastNotifier()
 
-        toaster.show_toast(title="Schedule Notification", msg=f"Tracking {names}", threaded=True, duration=5)
-        while toaster.notification_active():sleep(0.1)
+        Utility.send_notif(f"Tracking {names}")
+
         sleep(0.5)
         
         for to_track in tracking:
@@ -331,8 +345,7 @@ class Tracking:
         toaster = ToastNotifier()
         
         if not burst:
-            toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}", threaded=True, duration=5)
-            while toaster.notification_active():sleep(0.1)
+            Utility.send_notif(f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}")
 
         min_dict = {}
         min_list = []
@@ -347,31 +360,27 @@ class Tracking:
         while track_dict in tracking:
 
             if Utility.get_minutes() == last + 20:
-                toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} is finished for today", threaded=True, duration=5)
-                while toaster.notification_active():sleep(0.1)
+                Utility.send_notif(f"{track_dict['NAME']} is finished for today")
 
                 if track_dict["MODE"] == "weekly":
                     new_dict = mydict["weekly"][track_dict["NAME"]][Utility.currentday()]
                     if not new_dict: 
-                        toaster.show_toast(title="Schedule Notification", msg="No schedule for today. Relaunch me when you have one again", threaded=True, duration=5)
-                        while toaster.notification_active():sleep(0.1)
+                        Utility.send_notif("No schedule for today. Relaunch me when you have one again")
                         Tracking.untrack(track_dict)
                         break
                     
                     track_dict["DICT"] = new_dict
                     while Utility.get_minutes() != 0: sleep(40)
-                    toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} has begun once again.", threaded=True, duration=5)
-
-
+                    Utility.send_notif(f"{track_dict['NAME']} has begun once again.")
+          
             try:
                 todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
             except KeyError:
                 continue
 
-            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=5)
-            while toaster.notification_active():sleep(0.1)
+            Utility.send_notif(f"It's about time. {todo}")
 
-            sleep(30)
+            sleep(35)
 
 
     @staticmethod
@@ -400,9 +409,7 @@ class Tracking:
 
         tracking.remove(to_remove)
         
-        toaster = ToastNotifier()
-        toaster.show_toast(title="Schedule Notification", msg=f"No longer tracking {to_remove['NAME']}", threaded=True, duration=5)
-        while toaster.notification_active():sleep(0.1)
+        Utility.send_notif(f"No longer tracking {to_remove['NAME']}")
 
         with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
             dump(tracking, f, indent=4)

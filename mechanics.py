@@ -279,6 +279,7 @@ class Tracking:
         with open("C:\\ScheduleKeeper\\tracking.json") as f:
             try:
                 tracking = load(f)
+                if not tracking: return
                 print("Tracking has continued from last time")
             except JSONDecodeError:
                 return
@@ -287,7 +288,7 @@ class Tracking:
 
         toaster = ToastNotifier()
 
-        toaster.show_toast(title="Schedule Notification", msg=f"Tracking {names}", threaded=True, duration=5)
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking {names}", threaded=True, duration=2)
         while toaster.notification_active():sleep(0.1)
         sleep(0.5)
         
@@ -330,7 +331,7 @@ class Tracking:
         toaster = ToastNotifier()
         
         if not burst:
-            toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}", threaded=True, duration=10)
+            toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}", threaded=True, duration=3)
             while toaster.notification_active():sleep(0.1)
 
         min_dict = {}
@@ -346,20 +347,20 @@ class Tracking:
         while track_dict in tracking:
 
             if Utility.get_minutes() == last + 20:
-                toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} is finished for today", threaded=True, duration=20)
+                toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} is finished for today", threaded=True, duration=3)
                 while toaster.notification_active():sleep(0.1)
 
                 if track_dict["MODE"] == "weekly":
                     new_dict = mydict["weekly"][track_dict["NAME"]][Utility.currentday()]
                     if not new_dict: 
-                        toaster.show_toast(title="Schedule Notification", msg="No schedule for today. Relaunch me when you have one again", threaded=True, duration=20)
+                        toaster.show_toast(title="Schedule Notification", msg="No schedule for today. Relaunch me when you have one again", threaded=True, duration=3)
                         while toaster.notification_active():sleep(0.1)
                         Tracking.untrack(track_dict)
                         break
                     
                     track_dict["DICT"] = new_dict
                     while Utility.get_minutes() != 0: sleep(40)
-                    toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} has begun once again.", threaded=True, duration=20)
+                    toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} has begun once again.", threaded=True, duration=3)
 
 
             try:
@@ -367,7 +368,7 @@ class Tracking:
             except KeyError:
                 continue
 
-            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=20)
+            toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=3)
             while toaster.notification_active():sleep(0.1)
 
             sleep(30)
@@ -400,7 +401,7 @@ class Tracking:
         tracking.remove(to_remove)
         
         toaster = ToastNotifier()
-        toaster.show_toast(title="Schedule Notification", msg=f"No longer tracking {to_remove['NAME']}", threaded=True, duration=10)
+        toaster.show_toast(title="Schedule Notification", msg=f"No longer tracking {to_remove['NAME']}", threaded=True, duration=2)
         while toaster.notification_active():sleep(0.1)
 
         with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:

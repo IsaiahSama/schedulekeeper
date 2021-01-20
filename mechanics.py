@@ -141,7 +141,6 @@ class Utility:
         toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
         engine.say(msg)
         engine.runAndWait()
-
     
 # Class handling creation of schedules
 class Create:
@@ -158,10 +157,11 @@ class Create:
 
         try:
             while True:
-                print("Press ctrl + c when you are finished")
+                Utility.clrs("Press ctrl + c when you are finished")
                 print("\nWhat is the day for which you would like to create a schedule for?")
                 day = input(": ").capitalize()
                 if day not in dotw: print("That is not a valid day..."); sleep(2); system("CLS"); continue
+                self.mydict["WEEKLY"][self.name][day] = {}
                 self.set_times(self.mydict["WEEKLY"][self.name][day])
 
         except KeyboardInterrupt:
@@ -192,6 +192,8 @@ class Create:
             if answer == 2: break
 
 # Class responsible for Reading, Updating and Deleting
+
+tracking = []
 
 class RUD:
     "READ UPDATE AND DELETE!!!!! Staticly"
@@ -253,6 +255,7 @@ class RUD:
     # Function responsible for deleting
     @staticmethod
     def delete(mode, myschedule):
+        global tracking
         mydict = myschedule[mode.upper()]
         while True:
             Utility.clrs()
@@ -267,6 +270,12 @@ class RUD:
             if confirm == 2: print("Cancelling"); sleep(2); continue
 
             print("Deleting")
+            tracked = [mydict for mydict in tracking if mydict["NAME"] == name and mydict["MODE"] == mode]
+            if tracked: 
+                tracking.remove(tracked[0])
+                with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
+                    dump(tracking, f, indent=4)
+
             del(myschedule[mode.upper()][name])
             print("Deleted")
             sleep(1)   
@@ -280,9 +289,6 @@ class RUD:
 #         name: "NAME"
 #     }
 # ]
-
-
-tracking = []
 
 
 class Tracking:
@@ -299,8 +305,6 @@ class Tracking:
                 return
 
         names = [item["NAME"] for item in tracking]
-
-        toaster = ToastNotifier()
 
         Utility.send_notif(f"Tracking {names}")
 
@@ -322,14 +326,14 @@ class Tracking:
         name, entry = Utility.get_entry(names, mydict, False)
         if not entry: print("Returning to main menu"); sleep(1); return 
 
-        if mode == "weekly":
+        if mode == "WEEKLY":
             entry = entry[Utility.currentday()]
 
         print(f"I will now track your {mode} schedule {name}, If no longer using the program, feel free to minimize the window while I keep track")
         track_dict = {"MODE": mode, "NAME":name, "DICT":entry}
-        thread = Thread(target=Tracking.tracker, args=(track_dict, myschedule), daemon=True)
-        thread.start()
-
+        # thread = Thread(target=Tracking.tracker, args=(track_dict, myschedule), daemon=True)
+        # thread.start()
+        Tracking.tracker(track_dict, myschedule)
         tracking.append(track_dict)
         with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
             dump(tracking, f, indent=4)
@@ -342,7 +346,6 @@ class Tracking:
         global tracking
         sleep(2)
 
-        toaster = ToastNotifier()
         
         if not burst:
             Utility.send_notif(f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}")
@@ -362,8 +365,8 @@ class Tracking:
             if Utility.get_minutes() == last + 20:
                 Utility.send_notif(f"{track_dict['NAME']} is finished for today")
 
-                if track_dict["MODE"] == "weekly":
-                    new_dict = mydict["weekly"][track_dict["NAME"]][Utility.currentday()]
+                if track_dict["MODE"] == "WEEKLY":
+                    new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]
                     if not new_dict: 
                         Utility.send_notif("No schedule for today. Relaunch me when you have one again")
                         Tracking.untrack(track_dict)
@@ -392,8 +395,8 @@ class Tracking:
             prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
 
             answer = Utility.verifyNumber(prompt, [1,2,3])
-            if answer == 1: mode = "daily"
-            elif answer == 2: mode = "weekly"
+            if answer == 1: mode = "DAILY"
+            elif answer == 2: mode = "WEEKLY"
             else: print("Returning to main menu"); return
 
             names = [item["NAME"] for item in tracking if item["MODE"] == mode]
@@ -419,10 +422,9 @@ class Tracking:
         Utility.clrs()
         global tracking
         if not tracking: print("Nothing is currently being tracked"); sleep(1); return
-        names = [tracked["NAME"] for tracked in tracking]
-        mode = [tracked["MODE"] for tracked in tracking]
+        names = [{tracked["MODE"]:tracked["NAME"]} for tracked in tracking]
 
         print("Showing all schedules being tracked")
-        print(*dict(zip(mode, names)).items())
+        print(names)
         print("Press enter to proceed")
         input(":")

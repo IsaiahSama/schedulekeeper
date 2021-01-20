@@ -118,8 +118,8 @@ class Main:
             prompt = "\n1)View Daily\n2)View Weekly\n3)Return to menu"
             response = Utility.verifyNumber(prompt, [1,2,3])
             if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.read("weekly", self.schedule)
-            if response == 1: RUD.read("daily", self.schedule)
+            if response == 2: RUD.read("WEEKLY", self.schedule)
+            if response == 1: RUD.read("DAILY", self.schedule)
 
     # Function that handles updating an existing schedule
     def update(self):
@@ -131,8 +131,8 @@ class Main:
             prompt = "\n1)Update Daily\n2)Update Weekly\n3)Return to menu"
             response = Utility.verifyNumber(prompt, [1,2,3])
             if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.update("weekly", self.schedule)
-            if response == 1: RUD.update("daily", self.schedule)
+            if response == 2: RUD.update("WEEKLY", self.schedule)
+            if response == 1: RUD.update("DAILY", self.schedule)
 
 
     # Function that handles deleting an existing schedule
@@ -145,8 +145,8 @@ class Main:
             prompt = "\n1)Delete Daily\n2)Delete Weekly\n3)Return to menu"
             response = Utility.verifyNumber(prompt, [1,2,3])
             if response == 3: print("Returning to menu"); return
-            if response == 2: RUD.delete("weekly", self.schedule)
-            if response == 1: RUD.delete("daily", self.schedule)
+            if response == 2: RUD.delete("WEEKLY", self.schedule)
+            if response == 1: RUD.delete("DAILY", self.schedule)
 
     # Function that handles deleting an existing Schedule
     def track(self):
@@ -158,8 +158,8 @@ class Main:
             prompt = "\n1)track Daily\n2)track Weekly\n3)Return to menu"
             response = Utility.verifyNumber(prompt, [1,2,3])
             if response == 3: print("Returning to menu"); return
-            if response == 2: Tracking.track("weekly", self.schedule)
-            if response == 1: Tracking.track("daily", self.schedule)  
+            if response == 2: Tracking.track("WEEKLY", self.schedule)
+            if response == 1: Tracking.track("DAILY", self.schedule)  
 
     # Function that closes the program
     def close(self):

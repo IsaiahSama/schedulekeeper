@@ -354,7 +354,7 @@ class Tracking:
                     if not new_dict: 
                         toaster.show_toast(title="Schedule Notification", msg="No schedule for today. Relaunch me when you have one again", threaded=True, duration=20)
                         while toaster.notification_active():sleep(0.1)
-                        tracking.remove(track_dict)
+                        Tracking.untrack(track_dict)
                         break
                     
                     track_dict["DICT"] = new_dict
@@ -374,32 +374,37 @@ class Tracking:
 
 
     @staticmethod
-    def untrack():
+    def untrack(to_remove=None):
         Utility.clrs()
         global tracking
-        if not tracking: print("No schedules are currently being tracked"); return
-        prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
+        if not to_remove:
+            if not tracking: print("No schedules are currently being tracked"); return
+            prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
 
-        answer = Utility.verifyNumber(prompt, [1,2,3])
-        if answer == 1: mode = "daily"
-        elif answer == 2: mode = "weekly"
-        else: print("Returning to main menu"); return
+            answer = Utility.verifyNumber(prompt, [1,2,3])
+            if answer == 1: mode = "daily"
+            elif answer == 2: mode = "weekly"
+            else: print("Returning to main menu"); return
 
-        names = [item["NAME"] for item in tracking if item["MODE"] == mode]
-        print('\n'.join(names))
+            names = [item["NAME"] for item in tracking if item["MODE"] == mode]
+            print('\n'.join(names))
 
-        print("Which schedule would you like to remove from tracking?")
-        name = input(": ").capitalize()
-        if name not in names: print(f"{name} is not being tracked..."); return
+            print("Which schedule would you like to remove from tracking?")
+            name = input(": ").capitalize()
+            if name not in names: print(f"{name} is not being tracked..."); return
 
-        to_remove = [schedule for schedule in tracking if schedule["MODE"] == mode and schedule["NAME"] == name]
-        if not to_remove: print("Could not remove that schedule for some reason"); return
+            to_remove = [schedule for schedule in tracking if schedule["MODE"] == mode and schedule["NAME"] == name]
+            if not to_remove: print("Could not remove that schedule for some reason"); return
+            to_remove = to_remove[0]
 
-        tracking.remove(to_remove[0])
+        tracking.remove(to_remove)
         
         toaster = ToastNotifier()
-        toaster.show_toast(title="Schedule Notification", msg=f"No longer tracking {name}", threaded=True, duration=10)
+        toaster.show_toast(title="Schedule Notification", msg=f"No longer tracking {to_remove['NAME']}", threaded=True, duration=10)
         while toaster.notification_active():sleep(0.1)
+
+        with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
+            dump(tracking, f, indent=4)
 
     @staticmethod
     def view_tracked():

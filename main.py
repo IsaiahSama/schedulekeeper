@@ -71,8 +71,8 @@ class Main:
     # Function that handles the main menu
     def menu(self):
         sleep(2)
-        print("When in a menu, press ctrl + c at any time to return here.")
         Utility.clrs(f"How May I help you today {self.mydict['USERNAME']}?\n\n")
+        print("When in a menu, press ctrl + c at any time to return here.")
         prompt = "1)Create A New Schedule\n\n2)View an Existing Schedule\n\n3)Update an Existing Schedule\n\n4)Delete an Existing Schedule\n\n5)Track a Schedule\n\n6)Untrack a Schedule\n\n7)View Schedules Being Tracked\n\n8)Exit this program\n\n9)Uninstall this program"
         print(f"Today is {ctime()}\n")
         
@@ -80,7 +80,7 @@ class Main:
 
         if response == 9: self.uninstall()
         if response == 8: self.close()
-        if response == 7: Tracking.viewtracked()
+        if response == 7: Tracking.view_tracked()
         if response == 6: Tracking.untrack()
         if response == 5: self.track()
         if response == 4: self.delete()

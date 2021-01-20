@@ -159,8 +159,8 @@ class Create:
         Utility.clrs("Creating Daily Schedule")
         print("Now, tell me the times and tasks you generally do in your day to day schedule")
         self.mydict["DAILY"][self.name] = {}
-        x = self.mydict["DAILY"][self.name]
-        self.set_times(x)
+        new_dict = self.mydict["DAILY"][self.name]
+        self.set_times(new_dict)
         
     # Function resonsible for setting the times and tasks for a given input
     def set_times(self, mydict):
@@ -274,7 +274,7 @@ tracking = []
 class Tracking:
     "Handling all the Tracking"
 
-    def trackset():
+    def trackset(myschedule):
         global tracking
         with open("C:\\ScheduleKeeper\\tracking.json") as f:
             try:
@@ -292,7 +292,7 @@ class Tracking:
         sleep(0.5)
         
         for to_track in tracking:
-            thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track,True))
+            thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track, myschedule, True))
             thread.start()
             
             
@@ -312,7 +312,7 @@ class Tracking:
 
         print(f"I will now track your {mode} schedule {name}, If no longer using the program, feel free to minimize the window while I keep track")
         track_dict = {"MODE": mode, "NAME":name, "DICT":entry}
-        thread = Thread(target=Tracking.tracker, args=(track_dict,), daemon=True)
+        thread = Thread(target=Tracking.tracker, args=(track_dict, myschedule), daemon=True)
         thread.start()
 
         tracking.append(track_dict)
@@ -323,7 +323,7 @@ class Tracking:
         
 
     @staticmethod
-    def tracker(track_dict, burst=False):
+    def tracker(track_dict, mydict, burst=False):
         global tracking
         sleep(2)
 
@@ -348,7 +348,20 @@ class Tracking:
             if Utility.get_minutes() == last + 20:
                 toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} is finished for today", threaded=True, duration=20)
                 while toaster.notification_active():sleep(0.1)
-                
+
+                if track_dict["MODE"] == "weekly":
+                    new_dict = mydict["weekly"][track_dict["NAME"]][Utility.currentday()]
+                    if not new_dict: 
+                        toaster.show_toast(title="Schedule Notification", msg="No schedule for today. Relaunch me when you have one again", threaded=True, duration=20)
+                        while toaster.notification_active():sleep(0.1)
+                        tracking.remove(track_dict)
+                        break
+                    
+                    track_dict["DICT"] = new_dict
+                    while Utility.get_minutes() != 0: sleep(40)
+                    toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} has begun once again.", threaded=True, duration=20)
+
+
             try:
                 todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
             except KeyError:

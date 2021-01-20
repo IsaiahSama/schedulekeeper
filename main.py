@@ -65,7 +65,7 @@ class Main:
         Utility.clrs(f"Welcome {self.mydict['USERNAME']}")
 
         if path.exists("C:\\ScheduleKeeper\\tracking.json"):
-            Tracking.trackset()
+            Tracking.trackset(self.schedule)
  
 
     # Function that handles the main menu

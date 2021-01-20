@@ -339,7 +339,7 @@ class Tracking:
             minutes = Utility.get_minutes(k)
             min_dict[minutes] = k
 
-        while True:
+        while track_dict in tracking:
 
             try:
                 todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
@@ -350,7 +350,7 @@ class Tracking:
             while toaster.notification_active():sleep(0.1)
 
             sleep(30)
-
+            
 
     @staticmethod
     def untrack():

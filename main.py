@@ -63,7 +63,7 @@ class Main:
 
         Utility.clrs("Finished Setup")
         Utility.clrs(f"Welcome {self.mydict['USERNAME']}")
-        
+
         if path.exists("C:\\ScheduleKeeper\\tracking.json"):
             Tracking.trackset()
  
@@ -73,13 +73,15 @@ class Main:
         sleep(2)
         print("When in a menu, press ctrl + c at any time to return here.")
         Utility.clrs(f"How May I help you today {self.mydict['USERNAME']}?\n\n")
-        prompt = "1)Create A New Schedule\n\n2)View an Existing Schedule\n\n3)Update an Existing Schedule\n\n4)Delete an Existing Schedule\n\n5)Track a Schedule\n\n6)Exit this program\n\n7)Uninstall this program"
+        prompt = "1)Create A New Schedule\n\n2)View an Existing Schedule\n\n3)Update an Existing Schedule\n\n4)Delete an Existing Schedule\n\n5)Track a Schedule\n\n6)Untrack a Schedule\n\n7)View Schedules Being Tracked\n\n8)Exit this program\n\n9)Uninstall this program"
         print(f"Today is {ctime()}\n")
         
-        response = Utility.verifyNumber(prompt, [1,2,3,4,5,6,7])
+        response = Utility.verifyNumber(prompt, [1,2,3,4,5,6,7,8,9])
 
-        if response == 7: self.uninstall()
-        if response == 6: self.close()
+        if response == 9: self.uninstall()
+        if response == 8: self.close()
+        if response == 7: Tracking.viewtracked()
+        if response == 6: Tracking.untrack()
         if response == 5: self.track()
         if response == 4: self.delete()
         if response == 3: self.update()
@@ -191,6 +193,11 @@ class Main:
     # Function that uninstalls the program
     def uninstall(self, full=True):
         print("Beginning uninstall process.")
+        if full:
+            prompt = "Are you sure you want to uninstall?\n1)Yes\n2)No"
+            answer = Utility.verifyNumber(prompt, [1,2])
+            if answer == 2: print("Cancelling"); sleep(2); return
+
         try:
 
             rmdir("C:\\ScheduleKeeper")

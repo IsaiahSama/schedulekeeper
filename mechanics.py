@@ -290,6 +290,7 @@ class Tracking:
     # Function responsible for tracking a task
     @staticmethod
     def track(mode, myschedule):
+        global tracking
         mydict = myschedule[mode.upper()]
         Utility.clrs()
         names = Utility.show_names(mode, mydict)
@@ -371,3 +372,15 @@ class Tracking:
         toaster = ToastNotifier()
         toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)
         while toaster.notification_active():sleep(0.1)
+
+    @staticmethod
+    def view_tracked():
+        global tracking
+        if not tracking: print("Nothing is currently being tracked"); sleep(1); return
+        names = [tracked["NAME"] for tracked in tracking]
+        mode = [tracked["MODE"] for tracked in tracking]
+
+        print("Showing all schedules being tracked")
+        print(*dict(zip(mode, names).items()))
+        print("Press enter to proceed")
+        input(":")

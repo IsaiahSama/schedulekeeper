@@ -139,8 +139,10 @@ class Utility:
     @staticmethod
     def send_notif(msg):
         toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
-        engine.say(msg)
-        engine.runAndWait()
+        try:
+            engine.say(msg)
+            engine.runAndWait()
+        except RuntimeError: engine.stop()
     
 # Class handling creation of schedules
 class Create:
@@ -298,8 +300,10 @@ class Tracking:
         global tracking
         with open("C:\\ScheduleKeeper\\tracking.json") as f:
             try:
-                tracking = load(f)
-                if not tracking: return
+                data = load(f)
+                if not data: return
+                for sched in data:
+                    tracking.append(sched)
                 print("Tracking has continued from last time")
             except JSONDecodeError:
                 return
@@ -315,7 +319,6 @@ class Tracking:
                 to_track["DICT"] == myschedule["WEEKLY"][to_track["NAME"]][Utility.currentday()]
             thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track, myschedule, True))
             thread.start()
-            
             
 
     # Function responsible for tracking a task
@@ -352,7 +355,6 @@ class Tracking:
 
         min_dict = {}
         min_list = []
-
 
         for k in track_dict["DICT"].keys():
             minutes = Utility.get_minutes(k)
@@ -423,9 +425,8 @@ class Tracking:
         Utility.clrs()
         global tracking
         if not tracking: print("Nothing is currently being tracked"); sleep(1); return
-        names = [{tracked["MODE"]:tracked["NAME"]} for tracked in tracking]
 
         print("Showing all schedules being tracked")
-        print(names)
+        print(tracking)
         print("Press enter to proceed")
         input(":")

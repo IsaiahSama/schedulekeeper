@@ -78,17 +78,21 @@ class Main:
         print(f"Today is {ctime()}\n")
         
         response = Utility.verifyNumber(prompt, [1,2,3,4,5,6,7,8,9])
-
-        if response == 9: self.uninstall()
-        if response == 8: self.close()
-        if response == 7: Tracking.view_tracked()
-        if response == 6: Tracking.untrack()
-        if response == 5: self.track()
-        if response == 4: self.delete()
-        if response == 3: self.update()
-        if response == 2: self.view()
-        if response == 1: self.create()
+        try:
+            if response == 9: self.uninstall()
+            elif response == 8: self.close()
+            elif response == 7: Tracking.view_tracked()
+            elif response == 6: Tracking.untrack()
+            elif response == 5: self.track()
+            elif response == 4: self.delete()
+            elif response == 3: self.update()
+            elif response == 2: self.view()
+            else: self.create()
+        except KeyboardInterrupt:
+            print("Returning to main menu")
+        
         Utility.save(self.mydict)
+
 
     # Function that handles creation of a new schedule
     def create(self):
@@ -202,9 +206,4 @@ class Main:
 main = Main()
 main.setup()
 
-while True:
-    try:
-        main.menu() 
-    except KeyboardInterrupt:
-        print("Returning to main menu")
-        sleep(2)
+while True: main.menu() 

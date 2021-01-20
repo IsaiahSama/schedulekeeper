@@ -334,13 +334,21 @@ class Tracking:
             while toaster.notification_active():sleep(0.1)
 
         min_dict = {}
+        min_list = []
 
         for k in track_dict["DICT"].keys():
             minutes = Utility.get_minutes(k)
             min_dict[minutes] = k
+            min_list.append(minutes)
+
+        last = sorted(min_list)[-1]
 
         while track_dict in tracking:
 
+            if Utility.get_minutes() == last + 20:
+                toaster.show_toast(title="Schedule Notification", msg=f"{track_dict['NAME']} is finished for today", threaded=True, duration=20)
+                while toaster.notification_active():sleep(0.1)
+                
             try:
                 todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
             except KeyError:
@@ -350,7 +358,7 @@ class Tracking:
             while toaster.notification_active():sleep(0.1)
 
             sleep(30)
-            
+
 
     @staticmethod
     def untrack():

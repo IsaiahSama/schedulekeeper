@@ -311,6 +311,8 @@ class Tracking:
         sleep(0.5)
         
         for to_track in tracking:
+            if to_track["MODE"] == "WEEKLY":
+                to_track["DICT"] == myschedule["WEEKLY"][to_track["NAME"]][Utility.currentday()]
             thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track, myschedule, True))
             thread.start()
             
@@ -331,9 +333,8 @@ class Tracking:
 
         print(f"I will now track your {mode} schedule {name}, If no longer using the program, feel free to minimize the window while I keep track")
         track_dict = {"MODE": mode, "NAME":name, "DICT":entry}
-        # thread = Thread(target=Tracking.tracker, args=(track_dict, myschedule), daemon=True)
-        # thread.start()
-        Tracking.tracker(track_dict, myschedule)
+        thread = Thread(target=Tracking.tracker, args=(track_dict, myschedule), daemon=True)
+        thread.start()
         tracking.append(track_dict)
         with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
             dump(tracking, f, indent=4)
@@ -345,13 +346,13 @@ class Tracking:
     def tracker(track_dict, mydict, burst=False):
         global tracking
         sleep(2)
-
         
         if not burst:
             Utility.send_notif(f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}")
 
         min_dict = {}
         min_list = []
+
 
         for k in track_dict["DICT"].keys():
             minutes = Utility.get_minutes(k)
@@ -376,10 +377,10 @@ class Tracking:
                     while Utility.get_minutes() != 0: sleep(40)
                     Utility.send_notif(f"{track_dict['NAME']} has begun once again.")
           
-            try:
-                todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
-            except KeyError:
-                continue
+            minutes = min_dict.get(Utility.get_minutes(), None)
+            if not minutes: continue
+            todo = track_dict["DICT"].get(minutes, None)
+            if not todo: continue
 
             Utility.send_notif(f"It's about time. {todo}")
 

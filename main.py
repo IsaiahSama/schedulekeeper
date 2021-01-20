@@ -63,6 +63,9 @@ class Main:
 
         Utility.clrs("Finished Setup")
         Utility.clrs(f"Welcome {self.mydict['USERNAME']}")
+        
+        if path.exists("C:\\ScheduleKeeper\\tracking.json"):
+            Tracking.trackset()
  
 
     # Function that handles the main menu
@@ -172,8 +175,8 @@ class Main:
                 prompt = "\n1)track Daily\n2)track Weekly\n3)Return to menu"
                 response = Utility.verifyNumber(prompt, [1,2,3])
                 if response == 3: print("Returning to menu"); return
-                if response == 2: RUD.track("weekly", self.schedule)
-                if response == 1: RUD.track("daily", self.schedule)  
+                if response == 2: Tracking.track("weekly", self.schedule)
+                if response == 1: Tracking.track("daily", self.schedule)  
 
         except KeyboardInterrupt:
             print("Returning to menu")

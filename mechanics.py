@@ -256,6 +256,36 @@ class RUD:
             del(myschedule[mode.upper()][name])
             print("Deleted")
             sleep(1)   
+        
+
+# tracking_dict:
+# [
+#     {
+#         mode: "WEEKLY"/"DAILY",
+#         my_dict: {},
+#         name: "NAME"
+#     }
+# ]
+
+
+tracking = []
+
+
+class Tracking:
+    "Handling all the Tracking"
+
+    def trackset():
+        with open("C:\\ScheduleKeeper\\tracking.json") as f:
+            try:
+                tracking = load(f)
+                print("Tracking has continued from last time")
+            except JSONDecodeError:
+                return
+
+        for to_track in tracking:
+            thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track["NAME"], to_track["MODE"], to_track["DICT"]))
+            thread.start()
+            
 
     # Function responsible for tracking a task
     @staticmethod
@@ -265,44 +295,79 @@ class RUD:
         names = Utility.show_names(mode, mydict)
         name, entry = Utility.get_entry(names, mydict, False)
         if not entry: print("Returning to main menu"); sleep(1); return 
+
         if mode == "weekly":
             entry = entry[Utility.currentday()]
+
         print(f"I will now track your {mode} schedule {name}, If no longer using the program, feel free to minimize the window while I keep track")
-        thread = Thread(target=RUD.tracker, args=(name, mode, entry), daemon=True)
+        track_dict = {"MODE": mode, "NAME":name, "DICT":entry}
+        thread = Thread(target=Tracking.tracker, args=(track_dict), daemon=True)
         thread.start()
+
+        tracking.append(track_dict)
+        with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
+            dump(tracking, f, indent=4)
+
         sleep(2)
         
 
     @staticmethod
-    def tracker(name, mode, mydict):
+    def tracker(track_dict):
+        global tracking
         sleep(2)
-        min_dict = {}
-        min_list = []
+
         toaster = ToastNotifier()
 
-        toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {mode} schedule of {name}", threaded=True, duration=10)
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}", threaded=True, duration=10)
         while toaster.notification_active():sleep(0.1)
-        for k in mydict.keys():
+
+        min_dict = {}
+
+        for k in track_dict["DICT"].keys():
             minutes = Utility.get_minutes(k)
             min_dict[minutes] = k
-            min_list.append(minutes)
 
-        terminator = sorted(min_list)[-1]
-
-        while Utility.get_minutes() != (terminator + 20):
+        while track_dict in tracking:
 
             try:
-                todo = mydict[min_dict[Utility.get_minutes()]]
+                todo = track_dict["DICT"][min_dict[Utility.get_minutes()]]
             except KeyError:
                 continue
 
             toaster.show_toast(title="Schedule Notification", msg=f"It's about time. {todo}", threaded=True, duration=20)
             while toaster.notification_active():sleep(0.1)
 
-            sleep(40)
+            sleep(30)
 
 
-        toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {track_dict['NAME']} has been completed succesfully...", threaded=True, duration=10)
         while toaster.notification_active():sleep(0.1)
         sleep(2)
+
+    @staticmethod
+    def untrack():
+        global tracking
+        print("Showing list of currently tracked items")
+        if not tracking: print("No schedules are currently being tracked"); return
+        prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
+
+        answer = Utility.verifyNumber(prompt, [1,2,3])
+        if answer == 1: mode = "DAILY"
+        elif answer == 2: mode = "WEEKLY"
+        else: print("Returning to main menu"); return
+
+        names = [item["NAME"] for item in tracking if item["MODE"] == mode]
+        print('\n'.join(names))
+
+        print("Which schedule would you like to remove from tracking?")
+        name = input(": ").capitalize()
+        if name not in names: print(f"{name} is not being tracked..."); return
+
+        to_remove = [schedule for schedule in tracking if schedule["MODE"] == mode and schedule["NAME"] == name]
+        if not to_remove: print("Could not remove that schedule for some reason"); return
+
+        tracking.remove(to_remove[0])
         
+        toaster = ToastNotifier()
+        toaster.show_toast(title="Schedule Notification", msg=f"Tracking for {name} has been completed succesfully...", threaded=True, duration=10)
+        while toaster.notification_active():sleep(0.1)

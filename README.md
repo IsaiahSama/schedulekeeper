@@ -13,7 +13,12 @@ With the zip file downloaded, simply extract it using your method of choice, put
 From here just double click the main.py file to run it. Easy. I hope this comes in handy. If you have any queries or problems, feel free to email me at isaiahahmadsama@gmail.com with them. Enjoy.
 
 ## Side Note
+
 If you get an error when trying to view or update files, fixing is easy. Open your text editor of choice and create a .json file. Afterwards go to the folder where you created the file and double click it. Select your text editor of choice when prompted, and make sure that "Use this to open this file always" checkbox is checked. Then you can try running view / update again.
+
+## Another Side not
+
+If you want to have notifications shown to you at all times, simply follow the instructions found [here](https://thegeekpage.com/enable-notifications-while-in-full-screen-mode-in-windows-10/)
 
 ## Creating
 

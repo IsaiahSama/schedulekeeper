@@ -313,10 +313,10 @@ class Tracking:
         Utility.send_notif(f"Tracking {names}")
 
         sleep(0.5)
-        
+
         for to_track in tracking:
             if to_track["MODE"] == "WEEKLY":
-                to_track["DICT"] == myschedule["WEEKLY"][to_track["NAME"]][Utility.currentday()]
+                to_track["DICT"] = myschedule["WEEKLY"][to_track["NAME"]][Utility.currentday()]
             thread = Thread(daemon=True, target=Tracking.tracker, args=(to_track, myschedule, True))
             thread.start()
             

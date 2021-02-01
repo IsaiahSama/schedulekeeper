@@ -377,7 +377,7 @@ class Tracking:
                 if track_dict["MODE"] == "ONE-TIME":
                     sleep(10)
                     Utility.send_notif("One time schedule has completed successfully... removing now")
-                    tracking.remove(track_dict)
+                    Tracking.untrack(track_dict)
 
                 if track_dict["MODE"] == "WEEKLY":
                     new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]
@@ -406,11 +406,12 @@ class Tracking:
         global tracking
         if not to_remove:
             if not tracking: print("No schedules are currently being tracked"); return
-            prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
+            prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)One-Time\n4)Return to menu"
 
             answer = Utility.verifyNumber(prompt, [1,2,3])
             if answer == 1: mode = "DAILY"
             elif answer == 2: mode = "WEEKLY"
+            elif answer == 3: mode = "ONE-TIME"
             else: print("Returning to main menu"); return
 
             names = [item["NAME"] for item in tracking if item["MODE"] == mode]

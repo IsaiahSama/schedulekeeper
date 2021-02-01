@@ -177,6 +177,13 @@ class Create:
         self.mydict["DAILY"][self.name] = {}
         new_dict = self.mydict["DAILY"][self.name]
         self.set_times(new_dict)
+
+    def create_one_time(self):
+        Utility.clrs("Creating one time schedule")
+        self.mydict["ONE-TIME"][self.name] = {}
+        print("Now, tell me the times and tasks you wish to do for this time only")
+        self.set_times(self.mydict["ONE-TIME"][self.name])
+        Tracking.track("ONE-TIME", self.mydict["ONE-TIME"][self.name])
         
     # Function resonsible for setting the times and tasks for a given input
     def set_times(self, mydict):
@@ -365,8 +372,12 @@ class Tracking:
 
         while track_dict in tracking:
 
-            if Utility.get_minutes() == last + 20:
+            if Utility.get_minutes() >= last + 20:
                 Utility.send_notif(f"{track_dict['NAME']} is finished for today")
+                if track_dict["MODE"] == "ONE-TIME":
+                    sleep(10)
+                    Utility.send_notif("One time schedule has completed successfully... removing now")
+                    tracking.remove(track_dict)
 
                 if track_dict["MODE"] == "WEEKLY":
                     new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]

@@ -1,0 +1,79 @@
+{
+    "Monday": {
+        "08:15": "BB",
+        "10:21": "Mathematics Lecture",
+        "11:00": "Review",
+        "12:00": "Break for Lunch",
+        "13:00": "Continue review if not satisfied",
+        "14:00": "Do Coursera",
+        "15:00": "End Coursera and vibe for a bit",
+        "17:00": "Computer Science Lecture",
+        "19:00": "Review begin",
+        "20:20": "End...",
+        "22:22": "More Bb... Tru",
+        "23:00": "Sleep"
+    },
+    "Tuesday": {
+        "07:50": "BB",
+        "08:10": "Maths Lecture",
+        "10:12": "End Maths and start review",
+        "11:30": "End review if satisfied. Start Coursera",
+        "12:30": "End Coursera... Vibe time",
+        "14:00": "Vibe time is coming to close in 1 hour",
+        "15:00": "Vibe time is over, Go through any work",
+        "16:30": "Prepare for computer science",
+        "17:00": "Computer Science Practical",
+        "21:00": "End of Class",
+        "22:22": "More Bb... Tru",
+        "23:00": "Sleep"
+    },
+    "Wednesday": {
+        "08:15": "BB",
+        "09:00": "Math Lecture",
+        "11:00": "End Class",
+        "11:30": "End review if satisfied. Start Coursera",
+        "12:30": "End Coursera... Vibe time",
+        "14:00": "Exposition for Academic Purposes",
+        "16:00": "Class end",
+        "17:00": "Comp Sci Lecture",
+        "18:00": "Class end",
+        "18:05": "Computer Science Tutorial",
+        "19:00": "Class end",
+        "22:22": "More Bb... Tru",
+        "23:00": "Sleep"
+    },
+    "Thursday": {
+        "08:15": "BB",
+        "10:00": "Start Coursera",
+        "11:30": "End Coursera",
+        "14:00": "Exposition for Academic Purposes",
+        "15:00": "Class end",
+        "18:00": "SJPI Online",
+        "21:00": "SJPI online end.",
+        "22:22": "More Bb... Tru",
+        "23:00": "Sleep"
+    },
+    "Friday": {
+        "08:15": "BB",
+        "04:00": "Exposition for Academic Purposes",
+        "05:00": "Class end",
+        "10:00": "FYE Lecture",
+        "12:00": "CLass end",
+        "14:00": "Start Coursera",
+        "15:30": "end Coursera",
+        "16:00": "Math Tutorial",
+        "17:00": "Class end",
+        "22:22": "More Bb... Tru",
+        "23:00": "Sleep"
+    },
+    "Saturday": {
+        "08:15": "BB",
+        "10:00": "Yes"
+    },
+    "Sunday": {
+        "08:15": "BB",
+        "23:00": "Sleep",
+        "12:30": "Beging review of week",
+        "16:30": "End review"
+    }
+}

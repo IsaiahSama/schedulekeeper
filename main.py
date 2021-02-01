@@ -46,6 +46,7 @@ class Main:
             self.schedule = self.mydict["SCHEDULES"]
             self.schedule["DAILY"] = {}
             self.schedule["WEEKLY"] = {}
+            self.schedule["ONE-TIME"] = {}
         else: 
             print("Main directory already exists.")
             print("Searching for previous schedule...")
@@ -62,6 +63,9 @@ class Main:
                         print("There seems to have been an error with your schedule file.")
                         return
 
+        check = self.schedule.get("ONE-TIME", None)
+        if not check:
+            self.schedule["ONE-TIME"] = {}
         Utility.clrs("Finished Setup")
         Utility.clrs(f"Welcome {self.mydict['USERNAME']}")
 
@@ -105,10 +109,11 @@ class Main:
         while True:
             system("CLS")
             print("What would you like to do next")
-            prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Return to menu"
+            prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Create One-Time Schedule\n\n4)Return to menu"
             answer = Utility.verifyNumber(prompt, [1,2,3])
-            if answer == 3: return
+            if answer == 4: return
             create = Create(name.capitalize(), self.schedule)
+            if answer == 3: create.create_one_time()
             if answer == 2: create.create_weekly()
             if answer == 1: create.create_daily()
         

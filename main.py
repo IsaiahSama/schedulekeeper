@@ -100,13 +100,13 @@ class Main:
 
     # Function that handles creation of a new schedule
     def create(self):
-        print("Creating new schedule...")
-        prompt = "What would you like to name this schedule?"
-        print("What should I call your schedule?")
-        name = input(": ")
-        name = name.replace(" ", "-")
-        print("Noted")
         while True:
+            print("Creating new schedule...")
+            prompt = "What would you like to name this schedule?"
+            print("What should I call your schedule?")
+            name = input(": ")
+            name = name.replace(" ", "-")
+            print("Noted")
             system("CLS")
             print("What would you like to do next")
             prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Create One-Time Schedule\n\n4)Return to menu"

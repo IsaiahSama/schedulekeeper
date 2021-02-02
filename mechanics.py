@@ -167,6 +167,9 @@ class Create:
                 self.set_times(self.mydict["WEEKLY"][self.name][day])
 
         except KeyboardInterrupt:
+            for day in dotw:
+                x = self.mydict["WEEKLY"][self.name].get(day, None)
+                if not x: self.mydict["WEEKLY"][self.name][day] = {}
             print("Completed... Returning to main menu")
 
 
@@ -183,7 +186,12 @@ class Create:
         self.mydict["ONE-TIME"][self.name] = {}
         print("Now, tell me the times and tasks you wish to do for this time only")
         self.set_times(self.mydict["ONE-TIME"][self.name])
-        Tracking.track("ONE-TIME", self.mydict["ONE-TIME"][self.name])
+        track_dict = {"MODE": "ONE-TIME", "NAME":self.name, "DICT":self.mydict["ONE-TIME"][self.name]}
+        thread = Thread(target=Tracking.tracker, args=(track_dict, self.mydict, None, self.name), daemon=True)
+        thread.start()
+        tracking.append(track_dict)
+        with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
+            dump(tracking, f, indent=4)
         
     # Function resonsible for setting the times and tasks for a given input
     def set_times(self, mydict):
@@ -263,9 +271,11 @@ class RUD:
 
     # Function responsible for deleting
     @staticmethod
-    def delete(mode, myschedule):
+    def delete(mode, myschedule, name=None):
         global tracking
         mydict = myschedule[mode.upper()]
+        if mode == "ONE-TIME":
+            del(myschedule[mode][name])
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
@@ -353,7 +363,7 @@ class Tracking:
         
 
     @staticmethod
-    def tracker(track_dict, mydict, burst=False):
+    def tracker(track_dict, mydict, burst=False, name=None):
         global tracking
         sleep(2)
         
@@ -368,6 +378,9 @@ class Tracking:
             min_dict[minutes] = k
             min_list.append(minutes)
 
+        if not min_list:
+            Utility.send_notif(f"Sorry, could not start tracking the {track_dict['MODE']} {track_dict['NAME']} as you have no schedule for this day")
+            return
         last = sorted(min_list)[-1]
 
         while track_dict in tracking:
@@ -398,6 +411,9 @@ class Tracking:
             Utility.send_notif(f"It's about time. {todo}")
 
             sleep(35)
+
+        if track_dict["MODE"] == "ONE-TIME":
+            RUD.delete("ONE-TIME", mydict, name)
 
 
     @staticmethod

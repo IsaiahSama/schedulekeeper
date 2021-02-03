@@ -8,12 +8,6 @@ import pyttsx3
 
 toaster = ToastNotifier()
 
-engine = pyttsx3.init()
-
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id) 
-
-
 # Dict of days
 dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
@@ -138,11 +132,16 @@ class Utility:
     
     @staticmethod
     def send_notif(msg):
+        engine = pyttsx3.init()
+
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice', voices[1].id) 
+
         toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
-        try:
-            engine.say(msg)
-            engine.runAndWait()
-        except RuntimeError: engine.stop()
+
+        engine.say(msg)
+        engine.runAndWait()
+        engine.stop()
     
 # Class handling creation of schedules
 class Create:

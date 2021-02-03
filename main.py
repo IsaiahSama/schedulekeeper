@@ -101,7 +101,7 @@ class Main:
     # Function that handles creation of a new schedule
     def create(self):
         while True:
-            print("Creating new schedule...")
+            print("Creating new schedule... press ctrl + c to return to menu")
             prompt = "What would you like to name this schedule?"
             print("What should I call your schedule?")
             name = input(": ")

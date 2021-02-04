@@ -8,12 +8,6 @@ import pyttsx3
 
 toaster = ToastNotifier()
 
-engine = pyttsx3.init()
-
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id) 
-
-
 # Dict of days
 dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 
@@ -138,11 +132,16 @@ class Utility:
     
     @staticmethod
     def send_notif(msg):
+        engine = pyttsx3.init()
+
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice', voices[1].id) 
+
         toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
-        try:
-            engine.say(msg)
-            engine.runAndWait()
-        except RuntimeError: engine.stop()
+
+        engine.say(msg)
+        engine.runAndWait()
+        engine.stop()
     
 # Class handling creation of schedules
 class Create:
@@ -167,6 +166,9 @@ class Create:
                 self.set_times(self.mydict["WEEKLY"][self.name][day])
 
         except KeyboardInterrupt:
+            for day in dotw:
+                x = self.mydict["WEEKLY"][self.name].get(day, None)
+                if not x: self.mydict["WEEKLY"][self.name][day] = {}
             print("Completed... Returning to main menu")
 
 
@@ -177,6 +179,18 @@ class Create:
         self.mydict["DAILY"][self.name] = {}
         new_dict = self.mydict["DAILY"][self.name]
         self.set_times(new_dict)
+
+    def create_one_time(self):
+        Utility.clrs("Creating one time schedule")
+        self.mydict["ONE-TIME"][self.name] = {}
+        print("Now, tell me the times and tasks you wish to do for this time only")
+        self.set_times(self.mydict["ONE-TIME"][self.name])
+        track_dict = {"MODE": "ONE-TIME", "NAME":self.name, "DICT":self.mydict["ONE-TIME"][self.name]}
+        thread = Thread(target=Tracking.tracker, args=(track_dict, self.mydict, None, self.name), daemon=True)
+        thread.start()
+        tracking.append(track_dict)
+        with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
+            dump(tracking, f, indent=4)
         
     # Function resonsible for setting the times and tasks for a given input
     def set_times(self, mydict):
@@ -256,9 +270,11 @@ class RUD:
 
     # Function responsible for deleting
     @staticmethod
-    def delete(mode, myschedule):
+    def delete(mode, myschedule, name=None):
         global tracking
         mydict = myschedule[mode.upper()]
+        if mode == "ONE-TIME":
+            del(myschedule[mode][name])
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
@@ -346,7 +362,7 @@ class Tracking:
         
 
     @staticmethod
-    def tracker(track_dict, mydict, burst=False):
+    def tracker(track_dict, mydict, burst=False, name=None):
         global tracking
         sleep(2)
         
@@ -361,12 +377,19 @@ class Tracking:
             min_dict[minutes] = k
             min_list.append(minutes)
 
+        if not min_list:
+            Utility.send_notif(f"Sorry, could not start tracking the {track_dict['MODE']} {track_dict['NAME']} as you have no schedule for this day")
+            return
         last = sorted(min_list)[-1]
 
         while track_dict in tracking:
 
-            if Utility.get_minutes() == last + 20:
+            if Utility.get_minutes() >= last + 20:
                 Utility.send_notif(f"{track_dict['NAME']} is finished for today")
+                if track_dict["MODE"] == "ONE-TIME":
+                    sleep(10)
+                    Utility.send_notif("One time schedule has completed successfully... removing now")
+                    Tracking.untrack(track_dict)
 
                 if track_dict["MODE"] == "WEEKLY":
                     new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]
@@ -388,6 +411,9 @@ class Tracking:
 
             sleep(35)
 
+        if track_dict["MODE"] == "ONE-TIME":
+            RUD.delete("ONE-TIME", mydict, name)
+
 
     @staticmethod
     def untrack(to_remove=None):
@@ -395,11 +421,12 @@ class Tracking:
         global tracking
         if not to_remove:
             if not tracking: print("No schedules are currently being tracked"); return
-            prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)Return to menu"
+            prompt = "What type of schedule would you like to untrack?\n1)Daily\n2)Weekly\n3)One-Time\n4)Return to menu"
 
             answer = Utility.verifyNumber(prompt, [1,2,3])
             if answer == 1: mode = "DAILY"
             elif answer == 2: mode = "WEEKLY"
+            elif answer == 3: mode = "ONE-TIME"
             else: print("Returning to main menu"); return
 
             names = [item["NAME"] for item in tracking if item["MODE"] == mode]

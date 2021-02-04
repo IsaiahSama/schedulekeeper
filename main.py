@@ -46,6 +46,7 @@ class Main:
             self.schedule = self.mydict["SCHEDULES"]
             self.schedule["DAILY"] = {}
             self.schedule["WEEKLY"] = {}
+            self.schedule["ONE-TIME"] = {}
         else: 
             print("Main directory already exists.")
             print("Searching for previous schedule...")
@@ -62,6 +63,9 @@ class Main:
                         print("There seems to have been an error with your schedule file.")
                         return
 
+        check = self.schedule.get("ONE-TIME", None)
+        if not check:
+            self.schedule["ONE-TIME"] = {}
         Utility.clrs("Finished Setup")
         Utility.clrs(f"Welcome {self.mydict['USERNAME']}")
 
@@ -96,19 +100,20 @@ class Main:
 
     # Function that handles creation of a new schedule
     def create(self):
-        print("Creating new schedule...")
-        prompt = "What would you like to name this schedule?"
-        print("What should I call your schedule?")
-        name = input(": ")
-        name = name.replace(" ", "-")
-        print("Noted")
         while True:
+            print("Creating new schedule... press ctrl + c to return to menu")
+            prompt = "What would you like to name this schedule?"
+            print("What should I call your schedule?")
+            name = input(": ")
+            name = name.replace(" ", "-")
+            print("Noted")
             system("CLS")
             print("What would you like to do next")
-            prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Return to menu"
-            answer = Utility.verifyNumber(prompt, [1,2,3])
-            if answer == 3: return
+            prompt = "\n1)Create day-to-day schedule\n\n2)Create weekly schedule\n\n3)Create One-Time Schedule\n\n4)Return to menu"
+            answer = Utility.verifyNumber(prompt, [1,2,3,4])
+            if answer == 4: return
             create = Create(name.capitalize(), self.schedule)
+            if answer == 3: create.create_one_time()
             if answer == 2: create.create_weekly()
             if answer == 1: create.create_daily()
         
@@ -119,9 +124,10 @@ class Main:
         while True:
 
             Utility.clrs("Would you like to view a daily or weekly schedule?")
-            prompt = "\n1)View Daily\n2)View Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
+            prompt = "\n1)View Daily\n2)View Weekly\n3)View One-Time\n4)Return to menu"
+            response = Utility.verifyNumber(prompt, [1,2,3,4])
+            if response == 4: print("Returning to menu"); return
+            if response == 3: RUD.read("ONE-TIME", self.schedule)
             if response == 2: RUD.read("WEEKLY", self.schedule)
             if response == 1: RUD.read("DAILY", self.schedule)
 
@@ -133,8 +139,9 @@ class Main:
 
             Utility.clrs("Would you like to update a daily or weekly schedule?")
             prompt = "\n1)Update Daily\n2)Update Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
+            response = Utility.verifyNumber(prompt, [1,2,3,4])
+            if response == 4: print("Returning to menu"); return
+            if response == 3: RUD.update("ONE-TIME", self.schedule)
             if response == 2: RUD.update("WEEKLY", self.schedule)
             if response == 1: RUD.update("DAILY", self.schedule)
 
@@ -146,9 +153,10 @@ class Main:
         while True:
 
             Utility.clrs("Would you like to delete a daily or weekly schedule?")
-            prompt = "\n1)Delete Daily\n2)Delete Weekly\n3)Return to menu"
-            response = Utility.verifyNumber(prompt, [1,2,3])
-            if response == 3: print("Returning to menu"); return
+            prompt = "\n1)Delete Daily\n2)Delete Weekly\n3)Delete One-Time\n4)Return to menu"
+            response = Utility.verifyNumber(prompt, [1,2,3,4])
+            if response == 4: print("Returning to menu"); return
+            if response == 3: RUD.delete("ONE-TIME", self.schedule)
             if response == 2: RUD.delete("WEEKLY", self.schedule)
             if response == 1: RUD.delete("DAILY", self.schedule)
 

@@ -131,17 +131,18 @@ class Utility:
 
     
     @staticmethod
-    def send_notif(msg):
+    def send_notif(name, msg):
         engine = pyttsx3.init()
 
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[1].id) 
 
-        toaster.show_toast(title="Schedule Notification", msg=msg, threaded=True, duration=5)
+        toaster.show_toast(title=name, msg=msg, threaded=True, duration=5)
 
         engine.say(msg)
         engine.runAndWait()
         engine.stop()
+        while toaster.notification_active(): sleep(0.1)
     
 # Class handling creation of schedules
 class Create:
@@ -326,7 +327,7 @@ class Tracking:
 
         names = [item["NAME"] for item in tracking]
 
-        Utility.send_notif(f"Tracking {names}")
+        Utility.send_notif("Schedule Notification", f"Tracking {names}")
 
         sleep(0.5)
 
@@ -367,7 +368,7 @@ class Tracking:
         sleep(2)
         
         if not burst:
-            Utility.send_notif(f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}")
+            Utility.send_notif(f"Schedule of {track_dict['name']}",f"Tracking your {track_dict['MODE']} schedule of {track_dict['NAME']}")
 
         min_dict = {}
         min_list = []
@@ -378,36 +379,36 @@ class Tracking:
             min_list.append(minutes)
 
         if not min_list:
-            Utility.send_notif(f"Sorry, could not start tracking the {track_dict['MODE']} {track_dict['NAME']} as you have no schedule for this day")
+            Utility.send_notif("Schedule Notification", f"Sorry, could not start tracking the {track_dict['MODE']} {track_dict['NAME']} as you have no schedule for this day")
             return
         last = sorted(min_list)[-1]
 
         while track_dict in tracking:
 
             if Utility.get_minutes() >= last + 20:
-                Utility.send_notif(f"{track_dict['NAME']} is finished for today")
+                Utility.send_notif(f"Schedule of {track_dict['name']}",f"{track_dict['NAME']} is finished for today")
                 if track_dict["MODE"] == "ONE-TIME":
                     sleep(10)
-                    Utility.send_notif("One time schedule has completed successfully... removing now")
+                    Utility.send_notif(f"Schedule of {track_dict['name']}","One time schedule has completed successfully... removing now")
                     Tracking.untrack(track_dict)
 
                 if track_dict["MODE"] == "WEEKLY":
                     new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]
                     if not new_dict: 
-                        Utility.send_notif("No schedule for today. Relaunch me when you have one again")
+                        Utility.send_notif(f"Schedule of {track_dict['name']}","No schedule for today. Relaunch me when you have one again")
                         Tracking.untrack(track_dict)
                         break
                     
                     track_dict["DICT"] = new_dict
                     while Utility.get_minutes() != 0: sleep(40)
-                    Utility.send_notif(f"{track_dict['NAME']} has begun once again.")
+                    Utility.send_notif(f"Schedule of {track_dict['name']}", f"{track_dict['NAME']} has begun once again.")
           
             minutes = min_dict.get(Utility.get_minutes(), None)
             if not minutes: continue
             todo = track_dict["DICT"].get(minutes, None)
             if not todo: continue
 
-            Utility.send_notif(f"It's about time. {todo}")
+            Utility.send_notif(f"Schedule of {track_dict['name']}", f"It's about time. {todo}")
 
             sleep(35)
 
@@ -442,7 +443,7 @@ class Tracking:
 
         tracking.remove(to_remove)
         
-        Utility.send_notif(f"No longer tracking {to_remove['NAME']}")
+        Utility.send_notif("Schedule Notification",f"No longer tracking {to_remove['NAME']}")
 
         with open("C:\\ScheduleKeeper\\tracking.json", "w") as f:
             dump(tracking, f, indent=4)

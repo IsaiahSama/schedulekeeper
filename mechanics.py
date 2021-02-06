@@ -5,6 +5,8 @@ from re import findall
 from threading import Thread
 from win10toast import ToastNotifier
 import pyttsx3
+import requests
+from bs4 import BeautifulSoup
 
 toaster = ToastNotifier()
 
@@ -14,6 +16,24 @@ dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "T
 # Classes
 
 class Utility:
+
+    @staticmethod
+    def version_update():
+        version = "11"
+
+        session = requests.request("GET", "https://isaiahsama.github.io/schedulekeeper/")
+        soup = BeautifulSoup(session.text, "html.parser")
+        next_version = soup.p.text
+
+        if version != next_version:
+            print("A new version is available, go to [https://github.com/IsaiahSama/schedulekeeper] to update. Press enter to proceed if you wish to continue with this version")
+            input()
+
+        else:
+            print("No worries... your version is up to date.")
+
+        sleep(2)
+
 
     # Functions
     # Function which clears the screen and sends a message

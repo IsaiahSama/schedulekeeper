@@ -35,6 +35,7 @@ class Main:
 
     # Function that handles the setting up of file and folder
     def setup(self):
+        Utility.version_update()
         if not path.exists("C:\\ScheduleKeeper"): 
             mkdir("C:\\ScheduleKeeper")
             print("Created Main Directory")

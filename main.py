@@ -55,6 +55,8 @@ class Main:
             if not path.exists("C:\\ScheduleKeeper\\schedule.json"): 
                 print("No previous schedule found")
                 self.uninstall(False)
+                sleep(2)
+                return
             else:
                 with open("C:\\ScheduleKeeper\\schedule.json") as f:
                     try:

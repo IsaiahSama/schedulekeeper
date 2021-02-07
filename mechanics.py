@@ -298,14 +298,14 @@ class RUD:
     def delete(mode, myschedule, name=None):
         global tracking
         mydict = myschedule[mode.upper()]
-        if mode == "ONE-TIME":
+        if mode == "ONE-TIME" and name:
             del(myschedule[mode][name])
         while True:
             Utility.clrs()
             names = Utility.show_names(mode, mydict)
             name, entry = Utility.get_entry(names, mydict)
             
-            if not entry: print("Returning to main menu"); sleep(1); return
+            if not entry: del(entry); print("Returning to main menu"); sleep(1); return
 
             prompt = f"Are you sure you want to delete {name}\n1)Yes\n2)No"
 

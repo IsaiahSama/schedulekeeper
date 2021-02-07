@@ -19,7 +19,7 @@ class Utility:
 
     @staticmethod
     def version_update():
-        version = "11"
+        version = "212121"
 
         session = requests.request("GET", "https://isaiahsama.github.io/schedulekeeper/")
         soup = BeautifulSoup(session.text, "html.parser")
@@ -30,7 +30,7 @@ class Utility:
             input()
 
         else:
-            print("No worries... your version is up to date.")
+            print(f"No worries... your version of \"{version}\" is up to date.")
 
         sleep(2)
 
@@ -94,7 +94,7 @@ class Utility:
             dump(mydict, f, indent=4)
 
         print("Opening data in your notepad. Return to me and press enter to proceed")
-        system(f"{name}.json")
+        system(f"notepad.exe {name}.json")
         input(": ")
         try:
             remove(f"{name}.json")
@@ -157,12 +157,15 @@ class Utility:
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[1].id) 
 
-        toaster.show_toast(title=name, msg=msg, threaded=True, duration=5)
+        try:
+            toaster.show_toast(title=name, msg=msg, threaded=True, duration=5)
+            engine.say(msg)
+            engine.runAndWait()
+            engine.stop()
+        except RuntimeError:
+            sleep(5)
+            Utility.send_notif(name, msg)
 
-        engine.say(msg)
-        engine.runAndWait()
-        engine.stop()
-        while toaster.notification_active(): sleep(0.1)
     
 # Class handling creation of schedules
 class Create:
@@ -184,7 +187,7 @@ class Create:
                 day = input(": ").capitalize()
                 if day not in dotw: print("That is not a valid day..."); sleep(2); system("CLS"); continue
                 self.mydict["WEEKLY"][self.name][day] = {}
-                self.set_times(self.mydict["WEEKLY"][self.name][day])
+                self.set_times(self.mydict["WEEKLY"][self.name][day], day)
 
         except KeyboardInterrupt:
             for day in dotw:
@@ -214,16 +217,17 @@ class Create:
             dump(tracking, f, indent=4)
         
     # Function resonsible for setting the times and tasks for a given input
-    def set_times(self, mydict):
+    def set_times(self, mydict, day=Utility.currentday()):
         while True:
-            Utility.clrs("Give me the time for the task in 24 hour format (02:00, 14:00)")
+            Utility.clrs(f"{day}: Give me the time for the task in 24 hour format (02:00, 14:00) or a time range in the format 02:00 - 14:00")
             time = input(": ")
             time = findall(r"([0-2][0-9]:[0-5][0-9])", time)
-            if not time: print("Invalid time."); sleep(2); continue
-            prompt = f"What task would you do at {time}"
-            task = Utility.verifyResponse(prompt)
-            if not task: continue
-            mydict[time[0]] = task
+            if not time: print("Invalid time was given."); sleep(2); continue
+            for time_ in time:
+                prompt = f"What task would you do at {time_}"
+                task = Utility.verifyResponse(prompt)
+                if not task: continue
+                mydict[time_] = task
             prompt = "Would you like to set another task and time?\n\n1)Yes\n\n2)No"
             answer = Utility.verifyNumber(prompt, [1,2])
             if answer == 2: break

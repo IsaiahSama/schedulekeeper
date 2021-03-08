@@ -19,7 +19,7 @@ class Utility:
 
     @staticmethod
     def version_update():
-        version = "212121"
+        version = "healplus"
 
         session = requests.request("GET", "https://isaiahsama.github.io/schedulekeeper/")
         soup = BeautifulSoup(session.text, "html.parser")
@@ -156,15 +156,18 @@ class Utility:
 
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[1].id) 
-
-        try:
-            toaster.show_toast(title=name, msg=msg, threaded=True, duration=5)
-            engine.say(msg)
-            engine.runAndWait()
-            engine.stop()
-        except RuntimeError:
-            sleep(5)
-            Utility.send_notif(name, msg)
+        count = 0
+        while count < 5:
+            try:
+                toaster.show_toast(title=name, msg=msg, threaded=True, duration=5)
+                engine.say(msg)
+                engine.runAndWait()
+                engine.stop()
+                break
+            except RuntimeError:
+                sleep(5)
+                Utility.send_notif(name, msg)
+                count += 1
 
     
 # Class handling creation of schedules
@@ -416,6 +419,10 @@ class Tracking:
                     Utility.send_notif(f"Schedule of {track_dict['NAME']}","One time schedule has completed successfully... removing now")
                     Tracking.untrack(track_dict)
 
+                if track_dict["MODE"] == "DAILY":
+                    while Utility.get_minutes() != 0: sleep(40)
+                    Utility.send_notif(f"Schedule of {track_dict['NAME']}", f"{track_dict['NAME']} has begun once again.")
+
                 if track_dict["MODE"] == "WEEKLY":
                     new_dict = mydict["WEEKLY"][track_dict["NAME"]][Utility.currentday()]
                     if not new_dict: 
@@ -426,6 +433,7 @@ class Tracking:
                     track_dict["DICT"] = new_dict
                     while Utility.get_minutes() != 0: sleep(40)
                     Utility.send_notif(f"Schedule of {track_dict['NAME']}", f"{track_dict['NAME']} has begun once again.")
+
           
             minutes = min_dict.get(Utility.get_minutes(), None)
             if not minutes: continue

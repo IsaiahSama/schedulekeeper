@@ -25,7 +25,8 @@ Schedules will be stored in the following format:
             "TIMES": {
                 "Time in 24 hour format": "Event to do at time",
                 "1400": "Task number 2"
-            }
+            },
+            "TRACKING": "bool (True or False)" 
         }
     ],
     "WEEKLY": [
@@ -38,7 +39,8 @@ Schedules will be stored in the following format:
                 "TUESDAY": {
                     "1200": "Sleep"
                 }
-            }
+            },
+            "TRACKING": "bool (True or False)" 
         }
     ],
     "ONE-TIME":[
@@ -46,7 +48,8 @@ Schedules will be stored in the following format:
             "TIMES": {
                 "Time in 24 hour format": "Event to do at time",
                 "0000": "Other event"
-            }
+            },
+            "TRACKING": true 
         }
     ],
     "TIMER": {

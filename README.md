@@ -10,7 +10,9 @@ ScheduleKeeper is a script created by Isaiah, which allows a user to track, and 
 
 # Implementations
 - Schedules will be stored in a JSON file for backwards compatibility with the previous version
+- This JSON file will be stored in the current directory. Please do not manually edit this file unless you know what you are doing, or you risk losing your schedules for ever.
 - Users should also be allowed to use a valid JSON file to add a schedule, or to bring an old schedule to this new version
+- Users are allowed to tweak the config.yaml file to have their own settings
 
 ## Schedules
 Schedules will be stored in the following format:

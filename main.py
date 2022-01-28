@@ -1,7 +1,8 @@
 # This is the main file which will contain the basics of the script.
 # Imports
 from mechanics import schedules, utils, config
-from pyinputplus import inputChoice
+from pyinputplus import inputMenu
+from time import sleep
 
 # Todo: Basic Menu
 
@@ -21,14 +22,12 @@ class Main:
         "Update a schedule": schedules.update,
         "View a schedule": schedules.view,
         "Delete a schedule": schedules.delete,
-        "Track a schedule": schedules.track,
-        "Exit the program": utils.exit()
+        "Exit the program": utils.exit
     }
 
     def main(self):
         """The main method of the entire program."""
 
-        
         # Infinite loop to run the main menu
 
         while True:
@@ -39,10 +38,15 @@ class Main:
         """Provides the menu for the user."""
 
         print("How may I be of service to you?")
-        response = inputChoice(choices=self.menu_options.keys(), prompt="Simply select from the following options")
+        response = inputMenu(choices=list(self.menu_options.keys()), prompt="Simply select from the following options\n", numbered=True)
         try:
             self.menu_options[response]()
         except KeyError:
             print("An invalid response was provided")
         except AttributeError:
-            print("The task that you have attempted to use, does not yet exist / a work in progress")
+            print("The task that you have attempted to use, does not yet exist or is a work in progress")
+        
+        input("Press enter to continue")
+
+main = Main()
+main.main()

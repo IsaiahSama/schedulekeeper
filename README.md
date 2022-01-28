@@ -45,6 +45,7 @@ Schedules will be stored in the following format:
     ],
     "ONE-TIME":[
         {
+            "SCHEDULE_NAME": "some_one_time_schedule",
             "TIMES": {
                 "Time in 24 hour format": "Event to do at time",
                 "0000": "Other event"

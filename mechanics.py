@@ -16,9 +16,15 @@ dict_of_days = {"Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "T
 # Classes
 
 class Utility:
+    """A utility class providing several static methods
+    
+    Methods:
+        version_update() - Used to verify if the current version is correct, or if an update was done"""
 
     @staticmethod
     def version_update():
+        """Method to verify that the current running program is the latest version"""
+
         version = "healplus"
 
         session = requests.request("GET", "https://isaiahsama.github.io/schedulekeeper/")
@@ -39,12 +45,26 @@ class Utility:
     # Function which clears the screen and sends a message
     @staticmethod
     def clrs(text="\n"):
+        """Method which clears the screen and then outputs a given message
+        
+        Args:
+            text(str): The text to be displayed. Defaults to new line"""
+
         system("CLS")
         print(text)
 
     # Function which verifies that input is a number within a given range
     @staticmethod
-    def verifyNumber(prompt, numrange):
+    def verifyNumber(prompt:str, numrange:list) -> int:
+        """Method which verifies that provided input is a number within a given range.
+        
+        Args:
+            prompt(str): The message to be prompted each time input is requested
+            numrange(list): The list of numbers that the received input has to be in.
+            
+        Returns:
+            int"""
+
         while True:
             print(prompt)
             response = input(": ")
@@ -63,7 +83,15 @@ class Utility:
 
     # Function which confirms a given input
     @staticmethod
-    def verifyResponse(prompt):
+    def verifyResponse(prompt) -> bool:
+        """Method which confirms a given input.
+        
+        Args:
+            prompt (str): The message to be displayed to the user
+            
+        Returns:
+            bool"""
+
         print(prompt)
         response = input(": ")
         prompt = "Are you certain?\n1) Yes\n2) No"
@@ -74,13 +102,27 @@ class Utility:
 
     # Function responsible for saving the scheduledict
     @staticmethod
-    def save(mydict):
+    def save(mydict:dict) -> None:
+        """Method that saves the schedules in a json file
+        
+        Args:
+            mydict (dict): The dictionary to save"""
+
         with open("C:\\ScheduleKeeper\\schedule.json", "w") as f:
             dump(mydict, f, indent=4)
 
     # Function responsible for showing keys of a received dictionary
     @staticmethod
-    def show_names(search, mydict):
+    def show_names(search, mydict) -> list:
+        """Method that displays the names of created schedules
+        
+        Args:
+            search(str): Weekly, Monthly, One-time, etc. The type of schedules
+            mydict (dict): The dictionary to check
+            
+        Returns:
+            list : The list of dictionary keys"""
+
         Utility.clrs(f"Showing all of the names of your {search} schedules")
         keys = [key for key in mydict.keys()]
         for position, schedulename in enumerate(mydict.keys()):
@@ -89,7 +131,13 @@ class Utility:
 
     # Function then sends data to notepad
     @staticmethod
-    def show_data(name, mydict):
+    def show_data(name:str, mydict:dict):
+        """Displays the data within a dictionary.
+        
+        Args:
+            name(str): The name of the file?
+            mydict (dict): The dictionary who's contents should be displayed"""
+
         with open(f"{name}.json", "w") as f:
             dump(mydict, f, indent=4)
 
@@ -106,7 +154,18 @@ class Utility:
 
     # Function that gets requested dictionary entry
     @staticmethod
-    def get_entry(keys, mydict, show=True):
+    def get_entry(keys:list, mydict:dict, show:bool=True) -> dict:
+        """Gets a requested schedule
+        
+        Args:
+            keys (list): The list of valid keys for the dictionary
+            mydict (dict): The dictionary to be searched
+            show (bool): Whether to show the results to the user or not
+        
+        Returns:
+            str, dict
+        """
+
         system("CLS")
         while True:
             system("CLS")
@@ -133,15 +192,33 @@ class Utility:
 
     # Function which returns the long version of the current day
     @staticmethod
-    def currentday(): 
+    def currentday() -> str:
+        """Method that gets the full name of the current day
+        
+        Returns:
+            str"""
+
         return dict_of_days[ctime().split(" ")[0]]
 
     @staticmethod
-    def currenttime():
+    def currenttime() -> str:
+        """Method that gets the current time
+        
+        Returns:
+            str"""
+
         return findall(r"([0-2][0-9]:[0-5][0-9])", ctime())[0]
 
     @staticmethod
-    def get_minutes(time=None):
+    def get_minutes(time:str=None) -> int:
+        """Method that converts time to minutes
+        
+        Args:
+            time (str): The current time in the format of a string. Defaults to None
+            
+        Returns:
+            int"""
+
         if not time:
             value = Utility.currenttime()
         else:
@@ -151,7 +228,13 @@ class Utility:
 
     
     @staticmethod
-    def send_notif(name, msg):
+    def send_notif(name:str, msg:str):
+        """Method used to set a notification to the user using text to speech.
+        
+        Args:
+            name (str): The name to put on the toast notification
+            msg (str): The message the notification will contain"""
+            
         engine = pyttsx3.init()
 
         voices = engine.getProperty('voices')

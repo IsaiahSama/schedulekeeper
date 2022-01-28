@@ -27,14 +27,34 @@ from os import listdir, path, mkdir, rmdir
 
 
 class Main:
+    """Main class that handles main interactions with users
+    
+    Attributes:
+        schedule (dict)
+        mydict (dict)
+        
+    Methods:
+        setup() - Used to setup the schedules, and the bots information
+        menu() - The main menu for the program
+        
+        create() - Allows the user to create a new schedule
+        view() - Allows the user to view an existing schedule
+        update() - Allows the user to update an existing schedule
+        delete() - Allows the user to delete an existing schedule
+        track() - Sets up a schedule to be tracked by the bot
+        close() - Closes the program
+        uninstall(full=True) - This uninstalls the program"""
+    
+    mydict = {}
+    schedule = {}
     def __init__(self):
-        self.mydict = {}
         print("Beginning")
 
-    schedule = None
 
     # Function that handles the setting up of file and folder
     def setup(self):
+        """Used to setup the schedules and the bots information"""
+
         Utility.version_update()
         if not path.exists("C:\\ScheduleKeeper"): 
             mkdir("C:\\ScheduleKeeper")
@@ -78,6 +98,8 @@ class Main:
 
     # Function that handles the main menu
     def menu(self):
+        """This method handles the menu and user inputs"""
+
         sleep(2)
         Utility.clrs(f"How May I help you today {self.mydict['USERNAME']}?\n\n")
         print("When in a menu, press ctrl + c at any time to return here.")
@@ -102,7 +124,9 @@ class Main:
 
 
     # Function that handles creation of a new schedule
-    def create(self):
+    def create(self) -> None:
+        """This method is responsible for allowing the user to create a new schedule"""
+
         while True:
             print("Creating new schedule... press ctrl + c to return to menu")
             prompt = "What would you like to name this schedule?"
@@ -122,6 +146,8 @@ class Main:
         
     # Function that handles viewing an existing schedule
     def view(self):
+        """This method allows the user to view an existing schedule"""
+
         if not self.schedule: print("You have no existing schedules to view."); return
 
         while True:
@@ -136,6 +162,8 @@ class Main:
 
     # Function that handles updating an existing schedule
     def update(self):
+        """This method allows users to update an existing schedule"""
+
         if not self.schedule: print("You have no existing schedules to update."); return
 
         while True:
@@ -151,6 +179,7 @@ class Main:
 
     # Function that handles deleting an existing schedule
     def delete(self):
+        """This method allows a user to delete an existing schedule."""
         if not self.schedule: print("You have no existing schedules to delete."); return
 
         while True:
@@ -165,6 +194,7 @@ class Main:
 
     # Function that handles deleting an existing Schedule
     def track(self):
+        """This method sets up a provided schedule to be tracked by the bot"""
         if not self.schedule: print("You have no existing schedules to track."); return   
 
         while True:
@@ -178,12 +208,20 @@ class Main:
 
     # Function that closes the program
     def close(self):
+        """This closes the program
+        
+        Raises:
+            SystemExit"""
         print("See ya next time.")
         input("Press enter key...")
         raise SystemExit
 
     # Function that uninstalls the program
     def uninstall(self, full=True):
+        """Uninstalls the program.
+        
+        Args:
+            full(bool): Whether to do a complete uninstall or not"""
         print("Beginning uninstall process.")
         if full:
             prompt = "Are you sure you want to uninstall?\n1)Yes\n2)No"
@@ -211,7 +249,6 @@ class Main:
         
 
         self.close()
-
 
 
 main = Main()

@@ -1,6 +1,6 @@
 # This is the main file which will contain the basics of the script.
 # Imports
-from mechanics import Utilities
+from mechanics import schedules
 
 # Todo: Basic Menu
 
@@ -14,8 +14,8 @@ class Main:
         setup() - This will setup the schedules and everything for the user
     """
 
-    utils = Utilities()
-
     def __init__(self):
-        self.utils.setup()
+        pass
 
+    def menu():
+        pass

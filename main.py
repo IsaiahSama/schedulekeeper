@@ -33,7 +33,7 @@ class Main:
         # Infinite loop to run the main menu
 
         while True:
-            utils.clrs(f"Welcome {config['constants']['username']}")
+            utils.clrs(f"Welcome {config['variables']['username']}")
             self.menu()
 
     def menu(self):

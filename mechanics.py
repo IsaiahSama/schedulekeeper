@@ -55,7 +55,7 @@ class Utilities:
     def exit(self):
         """Function used to close the program"""
 
-        utils.clrs(f"Looks like this is goodbye {config['constants']['username']}. Until next time!")
+        utils.clrs(f"Looks like this is goodbye {config['variables']['username']}. Until next time!")
         raise SystemExit
     
 

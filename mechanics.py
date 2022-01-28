@@ -8,6 +8,7 @@ from plyer import notification
 from bs4 import BeautifulSoup
 from requests import get
 from config import config
+from time import sleep
 
 class Utilities:
     """A class which contains utility methods or often repeated code.
@@ -17,6 +18,8 @@ class Utilities:
     
     Methods:
         clrs(msg:str="") - Clears the screen and then displays a message
+        version_check() - Checks the current version of the program, to make sure that it is up_to_date
+        exit() - Exits the program
     """
 
     def clrs(self, msg:str=""):
@@ -29,6 +32,25 @@ class Utilities:
         
         system("CLS")
         print(msg)
+
+    def version_check(self):
+        """Method that checks to see if the current version of the running program is the latest version"""
+
+        url = "https://isaiahsama.github.io/schedulekeeper/"
+
+        response = get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        if soup.p.text != config['constants']['version']:
+            print("The current version of the program that you are using is not the latest one.\nVisit https://github.com/IsaiahSama/schedulekeeper to download the latest version")
+            resp = input("Type 'UPDATE!' in all caps, to make the update now. Type anything else to continue using this version\n")
+            if resp == "UPDATE!":
+                # Automatically do the update here
+                pass
+        else:
+            print("You are running the latest version of this program")
+        
+        sleep(2)
 
     def exit(self):
         """Function used to close the program"""

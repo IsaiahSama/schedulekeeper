@@ -1,8 +1,7 @@
 # This is the main file which will contain the basics of the script.
 # Imports
-from mechanics import schedules, utils, config
+from mechanics import schedules, utils, config, sleep
 from pyinputplus import inputMenu
-from time import sleep
 
 # Todo: Basic Menu
 
@@ -27,6 +26,9 @@ class Main:
 
     def main(self):
         """The main method of the entire program."""
+
+        # Ensure that the current version of the program is up to date
+        utils.version_check()
 
         # Infinite loop to run the main menu
 

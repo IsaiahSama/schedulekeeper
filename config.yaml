@@ -1,0 +1,8 @@
+---
+# Feel free to change the values here to suit your wants
+constants:
+  username: "User"
+  filename: "your_schedules.json"
+
+
+...

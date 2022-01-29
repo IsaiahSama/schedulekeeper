@@ -119,7 +119,6 @@ class Utilities:
         print(bar2)
         print(headers)
 
-        # this is just temporary
         if "TIMES" in schedule:
             rows = []
             for time, event in schedule['TIMES'].items():
@@ -130,7 +129,7 @@ class Utilities:
         else:
             days = schedule["DAYS"].keys()
             for day in days:
-                day_text = f'{"|" + day.center(width // 3) + "|"}'
+                day_text = day.center(width // 3)
                 rows = []
                 for time, event in schedule["DAYS"][day].items():
                     rows.append(f"{'|' + time.center(round(width_2 // 2)) + '|' + event.center(width_2 + 10) + '|'}".center(abs_width))
@@ -194,6 +193,7 @@ class Schedules:
             self.schedule[response] = []
         utils.display_dict(schedule)
         self.schedule[response].append(schedule)
+        self.save()
 
 
     def create_daily(self) -> dict:
@@ -272,10 +272,11 @@ class Schedules:
 
         print("Would you like to view a specific schedule? Or all?")
         answer = inputMenu(choices=["specific", "all"])
-        if answer == "all": utils.display_dict(schedules)
+        if answer == "all": [utils.display_dict(schedule) for schedule in schedule_list]
         else:
             print("Which schedule would you like to view?")
-            name = inputMenu(choices=schedule_names)
+            name = inputMenu(choices=schedule_names, blank=True)
+            if not name: print("No schedule name was selected"); return False
             utils.display_dict(utils.get_schedule_by_name(name, schedule_list))
 
     def update(self):
@@ -302,15 +303,18 @@ class Schedules:
     def load(self):
         """Attempts to load the user's schedule from the JSON file"""
 
-        with open(config['constants']['filename']) as file:
-            try:
+        data = None
+
+        try:
+            with open(config['constants']['filename']) as file:
                 data = load(file)
-            except JSONDecodeError as err:
-                print("An error has occurred.", err)
-                print("If you have made any changes to the file, please revert them.")
-            except FileNotFoundError:
-                print("Doesn't seem like you have any existing schedules.")
+        except JSONDecodeError as err:
+            print("An error has occurred.", err)
+            print("If you have made any changes to the file, please revert them.")
+        except FileNotFoundError:
+            print("Doesn't seem like you have any existing schedules.")
         if data:
+            print("Successfully loaded your schedule into memory")
             self.schedule = data
 
 utils = Utilities()

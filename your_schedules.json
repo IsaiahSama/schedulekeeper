@@ -1,0 +1,39 @@
+{
+    "WEEKLY": [
+        {
+            "DAYS": {
+                "Monday": {
+                    "1100": "Caribbean Civilization Tutorial",
+                    "1200": "Caribbean Civilization Tutorial end",
+                    "1300": "Math for Comp Sci Lecture",
+                    "1400": "Math for Comp Sci Lecture end",
+                    "1600": "Carib Civ Lecture",
+                    "1800": "Carib Civ Lecture end"
+                },
+                "Tuesday": {
+                    "1000": "Math for Comp SCi Lecture",
+                    "1300": "Math for Comp SCi Lecture end",
+                    "1600": "French",
+                    "1800": "French end"
+                },
+                "Thursday": {
+                    "1200": "Comp Sci Lecture",
+                    "1400": "Comp Sci Lecture end",
+                    "1401": "Comp Sci Lab",
+                    "1559": "Comp Sci Lab end",
+                    "1600": "French",
+                    "1800": "French end"
+                },
+                "Wednesday": {
+                    "1200": "Math for comp sci Lecture",
+                    "1300": "Math for comp sci Lecture end",
+                    "1400": "Pretend to be productive",
+                    "1559": "Pretend to be productive end",
+                    "1600": "French",
+                    "1800": "French end"
+                }
+            },
+            "SCHEDULE_NAME": "School lol"
+        }
+    ]
+}

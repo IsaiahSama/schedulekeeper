@@ -30,6 +30,10 @@ class Main:
         # Ensure that the current version of the program is up to date
         utils.version_check()
 
+        # Attempts to load the user's schedule into memory if it exists
+        schedules.load()
+
+        input("Press enter to continue")
         # Infinite loop to run the main menu
 
         while True:

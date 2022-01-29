@@ -7,6 +7,7 @@ ScheduleKeeper is a script created by Isaiah, which allows a user to track, and 
 - Allows a user to create, Read, Update, and Delete a schedule.
 - Allows users to create 3 different types of schedules, these being: Daily, Weekly and One-Time
 - Automatically track the user's schedules
+- Will speak and display a notification for schedules when their time arrives
 - Allows user to create a timer, to time themselves for present events.
 
 # Implementations

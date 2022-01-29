@@ -273,6 +273,7 @@ class Schedules:
         utils.display_dict(schedule)
         self.schedule[response].append(schedule)
         self.tracking.append(schedule)
+        utils.add_notif("Schedule", f"Your schedule of {schedule['SCHEDULE_NAME']} is now being tracked")
         self.save()
 
 
@@ -443,6 +444,8 @@ class Schedules:
             chosen_one = [timer for timer in self.schedule['TIMER'] if timer['TIMER_NAME'] == chosen_name][0]
             chosen_one['TRACKING'] = True
             self.tracking.append(chosen_one)
+            utils.add_notif("Timer", f"Your {chosen_one['DURATION']} timer has begun")
+
 
 
     def save(self):

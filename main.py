@@ -1,7 +1,6 @@
 # This is the main file which will contain the basics of the script.
 # Imports
-from mechanics import schedules, utils, config, sleep
-from pyinputplus import inputMenu
+from mechanics import schedules, utils, config, sleep, inputMenu
 
 # Todo: Basic Menu
 
@@ -18,6 +17,7 @@ class Main:
 
     menu_options = {
         "Create a schedule": schedules.create,
+        "Set a timer": schedules.timer,
         "Update a schedule": schedules.update,
         "View a schedule": schedules.view,
         "Delete a schedule": schedules.delete,
@@ -34,7 +34,12 @@ class Main:
 
         while True:
             utils.clrs(f"Welcome {config['variables']['username']}")
-            self.menu()
+            print("Remember, you can press ctrl + c at any time to return to the main menu")
+            try:
+                self.menu()
+            except KeyboardInterrupt:
+                print("Returning to the main menu")
+                pass
 
     def menu(self):
         """Provides the menu for the user."""
@@ -45,8 +50,8 @@ class Main:
             self.menu_options[response]()
         except KeyError:
             print("An invalid response was provided")
-        except AttributeError:
-            print("The task that you have attempted to use, does not yet exist or is a work in progress")
+        except AttributeError as err:
+            print("The task that you have attempted to use, does not yet exist or is a work in progress", err)
         
         input("Press enter to continue")
 

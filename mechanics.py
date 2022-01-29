@@ -1,26 +1,33 @@
 # This is the file that contains all of the mechanics used for the schedule keeper
 
 # Imports
+from json import JSONDecodeError, dump, load
 from os import system
 from os.path import exists
+from random import choice
+import sched
 from pyttsx3 import init
 from plyer import notification
 from bs4 import BeautifulSoup
 from requests import get
 from config import config
 from time import sleep
+from pyinputplus import inputMenu, inputStr, inputNum, inputYesNo
 
 class Utilities:
     """A class which contains utility methods or often repeated code.
     
     Attributes:
-        pass
+        days_of_the_week (list): A list of the days of the week
     
     Methods:
         clrs(msg:str="") - Clears the screen and then displays a message
         version_check() - Checks the current version of the program, to make sure that it is up_to_date
+        prompt_for_time() - Prompts for the user to enter an appropiate time
         exit() - Exits the program
     """
+
+    days_of_the_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     def clrs(self, msg:str=""):
         """Method used to display a message after clearing the screen of all current text
@@ -52,6 +59,15 @@ class Utilities:
         
         sleep(2)
 
+    def prompt_for_time(self) -> tuple[int, int]:
+        """Prompts for the user to enter a valid time in 24 hour format"""
+
+        print("Enter the time in 24 hour format (Example: 200 for 2 am and 1400 for 2pm) that the event should start.")
+        start_time = inputNum(min=0, max=2400)
+        end_time = inputNum(prompt="Now what time should this event finish?\n", min=0, max=2400)
+
+        return (start_time, end_time)
+
     def exit(self):
         """Function used to close the program"""
 
@@ -63,20 +79,109 @@ class Schedules:
     """Class which will handle everything releated to the schedules
     
     Attributes:
-        None
+        schedule (dict): Instance of the current schedule as retrieved from the JSON file
         
     Methods:
         create() - Used to create a new schedule
+        create_daily() - Creates a new daily schedule.
+        create_weekly() - Creates a new Weekly schedules.
+        create_one_time() - Creates a new one time schedule.
+        timer() - Creates a timer for a task.
         view() - Used to view a created schedule
         update() - Used to update an existing schedule
         delete() - Used to remove a schedule from memory
+        save() - Saves the schedule to the JSON file
+        load() - Used to load the schedule from the JSON file
     """
+
+    schedule = {}
 
     def create(self):
         """Method used to create a new schedule, and save it."""
 
-        raise AttributeError
-    
+        # raise AttributeError
+
+        choices = {"DAILY": self.create_daily, "WEEKLY": self.create_weekly, "ONE-TIME": self.create_daily}
+        response = inputMenu(prompt="What type of schedule would you like to create?\n", choices=list(choices.keys()), numbered=True)
+
+        name = inputStr(prompt="What should I name this schedule?\n")
+
+        try:
+            schedule = choices[response]()
+        except KeyboardInterrupt:
+            schedule = {}
+        if not schedule:
+            print("Abandoned. Returning to Main menu")
+            return False
+        
+        schedule["SCHEDULE_NAME"] = name
+        try:
+            self.schedule[response]
+        except KeyError:
+            self.schedule[response] = []
+        self.schedule[response].append(schedule)
+        print(self.schedule)
+
+
+    def create_daily(self) -> dict:
+        """Method used to create a daily schedule for the user
+
+        Returns:
+            dict: The created schedule"""
+
+        schedule = {}
+        times = {}
+        while True:
+            try:
+                print("Press ctrl + c when you are done")
+                start_time, end_time = utils.prompt_for_time()
+                event_name = inputStr(prompt="What are you planning on doing during this time?\n")
+                
+                times[str(start_time)] = event_name
+                times[str(end_time)] = event_name + " end"
+            except KeyboardInterrupt:
+                print("If you would like to abort creating this schedule, press ctrl + c again. To continue, just press enter")
+                input()
+                break
+
+        print("Finalizing")
+
+        schedule["TIMES"] = times
+        schedule['TRACKING'] = True
+        return schedule
+
+    def create_weekly(self) -> dict:
+        """Method used to create a weekly schedule for the user
+        
+        Returns:
+            dict: The Created Schedule"""
+
+        schedule = {
+            "DAYS": {}
+        }
+
+        print("Press ctrl + c at any point to abort creating this schedule")
+        while True:
+            day = inputMenu(prompt="What day would you like to give me the schedule for?\n", choices=utils.days_of_the_week)
+            
+            schedule["DAYS"][day] = {}
+
+            while True:
+                start_time, end_time = utils.prompt_for_time()
+                event = inputStr(prompt="What event would you like to do during this time?\n")
+                schedule["DAYS"][day][start_time] = event
+                schedule['DAYS'][day][end_time] = event + " end"
+                
+                resp = inputYesNo(prompt=f"Would you like to add another time for {day}\n")
+                if resp == 'no': break
+            resp = inputYesNo(prompt="Would you like to add a schedule for another day?\n")
+            if resp == 'no':break 
+        
+        print("Finalizing.")
+
+        return schedule
+        
+
     def view(self):
         """Method used to view created schedules."""
 
@@ -91,6 +196,31 @@ class Schedules:
         """Method used to delete existing schedules"""
 
         raise AttributeError
+
+    def timer(self):
+        """Method used for setting timers."""
+
+        raise AttributeError
+
+    def save(self):
+        """Saves the current schedule to the JSON file"""
+
+        with open(config['constants']['filename'], "w") as file:
+            dump(self.schedule, file, indent=4)
+
+    def load(self):
+        """Attempts to load the user's schedule from the JSON file"""
+
+        with open(config['constants']['filename']) as file:
+            try:
+                data = load(file)
+            except JSONDecodeError as err:
+                print("An error has occurred.", err)
+                print("If you have made any changes to the file, please revert them.")
+            except FileNotFoundError:
+                print("Doesn't seem like you have any existing schedules.")
+        if data:
+            self.schedule = data
 
 utils = Utilities()
 schedules = Schedules()

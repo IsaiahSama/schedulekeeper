@@ -454,11 +454,17 @@ class Schedules:
         while True:
             while not self.tracking: sleep(1)
             for schedule in self.tracking:
-                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items():
-                    if utils.get_current_time() == int(time):
-                        # print(f"It's time for {event} to BEGIN!")
-                        # Do some code here to send a notification
-                        pass
+                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items() or (schedule['DURATION'], schedule['TRACKING']):
+                    if schedule.get("TIMER_NAME"):
+                        schedule['DURATION'] -= 0.5
+                        if schedule['DURATION'] == 0:
+                            # Do some code here to send a notification
+                            pass
+                    else:
+                        if utils.get_current_time() == int(time):
+                            # print(f"It's time for {event} to BEGIN!")
+                            # Do some code here to send a notification
+                            pass
             sleep(30)
 
     def track_current_day(self):

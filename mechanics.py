@@ -177,7 +177,7 @@ class Utilities:
     def get_current_day(self) -> str:
         """Gets the current day"""
 
-        return ctime().split(" ")[0]
+        return [day for day in self.days_of_the_week if day.lower().startswith(ctime().split(" ")[0].lower())][0]
 
     def get_current_time(self) -> str:
         """Gets the current time"""
@@ -191,7 +191,7 @@ class Utilities:
         while True:
             while not self.notification_list: sleep(0.1)
             title, msg = self.notification_list.pop(0)
-            notification.notify(title=title, app_name="ScheduleKeeper",message=msg, app_icon=config['variables']['app_icon'])
+            notification.notify(title=title, app_name="ScheduleKeeper", message=msg, app_icon=config['variables']['app_icon'])
 
             engine = init()
             voices = engine.getProperty('voices')
@@ -467,7 +467,7 @@ class Schedules:
     def start_threads(self):
         """Method used to start all threads that the script uses."""
 
-        threads = [Thread(target=self.track, daemon=True), Thread(target=self.track_current_day, daemon=True)]
+        threads = [Thread(target=self.track, daemon=True), Thread(target=self.track_current_day, daemon=True), Thread(target=utils.notify, daemon=True)]
         [thread.start() for thread in threads]
 
     def track(self):
@@ -484,16 +484,16 @@ class Schedules:
         while True:
             while not self.tracking: sleep(1)
             for schedule in self.tracking:
-                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items() or (schedule['DURATION'], schedule['TRACKING']):
-                    if schedule.get("TIMER_NAME"):
-                        schedule['DURATION'] -= 0.5
-                        if schedule['DURATION'] == 0:
-                            # Do some code here to send a notification
-                            utils.add_notif("Timer", f"The timer set for {event} is now over.")
-                    else:
-                        if utils.get_current_time() == int(time):
-                            # Do some code here to send a notification
-                            utils.add_notif("Schedule", f"It's about time. Prepare to {event}")
+                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items():
+                    if utils.get_current_time() == int(time):
+                        # Do some code here to send a notification
+                        utils.add_notif("Schedule", f"It's about time. Prepare to {event}")
+
+                if schedule.get("TIMER_NAME"):
+                    schedule['DURATION'] -= 0.5
+                    if schedule['DURATION'] == 0:
+                        # Do some code here to send a notification
+                        utils.add_notif("Timer", f"The timer set for {event} is now over.")
             sleep(30)
 
     def track_current_day(self):

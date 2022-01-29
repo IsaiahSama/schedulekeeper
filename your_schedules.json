@@ -36,5 +36,16 @@
             "SCHEDULE_NAME": "School",
             "TRACKING": true
         }
+    ],
+    "ONE-TIME": [
+        {
+            "TIMES": {
+                "510": "Call this project a success for now",
+                "511": "Call this project a success for now end"
+            },
+            "SCHEDULE_NAME": "just a brief test",
+            "ONE-TIME": true,
+            "TRACKING": true
+        }
     ]
 }

@@ -36,6 +36,9 @@ class Main:
         # Begins the threads
         schedules.start_threads()
 
+        # Test notification
+        utils.add_notif("Testing", "Just making sure that all is well.")
+
         input("Press enter to continue")
         # Infinite loop to run the main menu
 

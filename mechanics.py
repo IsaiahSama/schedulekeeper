@@ -22,6 +22,7 @@ class Utilities:
         days_of_the_week (list): A list of the days of the week
         schedule_types (list): A list of the valid schedule types
         time_pattern (str): The pattern used to select the current time 
+        notification_list (list): A list of strings, pending being notified
     
     Methods:
         clrs(msg:str="") - Clears the screen and then displays a message
@@ -33,12 +34,14 @@ class Utilities:
         get_current_day() - Gets the current day
         get_current_time() - Gets the current time
         get_schedule_list() - Used to get the list of schedule names.
+        notify(notify:str, msg:str) - Uses text to speech and a notification to alert the user of a schedule 
         exit() - Exits the program
     """
 
     days_of_the_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     schedule_types = ["ONE-TIME", "WEEKLY", "DAILY", "TIMER"]
     time_pattern = compile(r"[0-2][0-9]:[0-5][0-9]")
+    notification_list = []
 
     def clrs(self, msg:str=""):
         """Method used to display a message after clearing the screen of all current text
@@ -172,12 +175,30 @@ class Utilities:
 
     def get_current_day(self) -> str:
         """Gets the current day"""
+
         return ctime().split(" ")[0]
 
     def get_current_time(self) -> str:
         """Gets the current time"""
+
         current_time = self.time_pattern.findall(ctime())[0]
         return int(''.join(current_time.split(":")))
+
+    def notify(self, title:str, msg:str):
+        """Method used for notifying users of there schedules
+        
+        Args:
+            title (str): The title of the notification
+            msg (str): The message to be displayed"""
+
+        notification.notify(title=title, app_name="ScheduleKeeper",message=msg, app_icon=config['variables']['app_icon'])
+
+        engine = init()
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice', voices[config['variables']['voice']].id) 
+        engine.say(msg)
+        engine.runAndWait()
+        engine.stop()
 
 
     def exit(self):

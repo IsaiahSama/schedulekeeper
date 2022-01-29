@@ -10,6 +10,6 @@ variables:
   # Voice is the voice to use when speaking messages. 1 is female, 0 is Male
   voice: 1
   # The icon of the notifications. Let it be an absolute path
-  app_icon: "./logo.png"
+  app_icon: "./logo.jpg"
   
 ...

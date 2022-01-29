@@ -34,7 +34,8 @@ class Utilities:
         get_current_day() - Gets the current day
         get_current_time() - Gets the current time
         get_schedule_list() - Used to get the list of schedule names.
-        notify(notify:str, msg:str) - Uses text to speech and a notification to alert the user of a schedule 
+        notify() - Uses text to speech and a notification to alert the user of a schedule 
+        add_notif(title:str, msg:str) - Adds a tuple to the notification list to be queued for notification
         exit() - Exits the program
     """
 
@@ -184,21 +185,29 @@ class Utilities:
         current_time = self.time_pattern.findall(ctime())[0]
         return int(''.join(current_time.split(":")))
 
-    def notify(self, title:str, msg:str):
-        """Method used for notifying users of there schedules
+    def notify(self):
+        """Method used for notifying users of their schedules"""
+
+        while True:
+            while not self.notification_list: sleep(0.1)
+            title, msg = self.notification_list.pop(0)
+            notification.notify(title=title, app_name="ScheduleKeeper",message=msg, app_icon=config['variables']['app_icon'])
+
+            engine = init()
+            voices = engine.getProperty('voices')
+            engine.setProperty('voice', voices[config['variables']['voice']].id) 
+            engine.say(msg)
+            engine.runAndWait()
+            engine.stop()
+
+    def add_notif(self, title:str, msg:str):
+        """Message used to add notifications to the notification Queue
         
         Args:
             title (str): The title of the notification
             msg (str): The message to be displayed"""
-
-        notification.notify(title=title, app_name="ScheduleKeeper",message=msg, app_icon=config['variables']['app_icon'])
-
-        engine = init()
-        voices = engine.getProperty('voices')
-        engine.setProperty('voice', voices[config['variables']['voice']].id) 
-        engine.say(msg)
-        engine.runAndWait()
-        engine.stop()
+        
+        self.notification_list.append((title, msg))
 
 
     def exit(self):
@@ -480,12 +489,11 @@ class Schedules:
                         schedule['DURATION'] -= 0.5
                         if schedule['DURATION'] == 0:
                             # Do some code here to send a notification
-                            pass
+                            utils.add_notif("Timer", f"The timer set for {event} is now over.")
                     else:
                         if utils.get_current_time() == int(time):
-                            # print(f"It's time for {event} to BEGIN!")
                             # Do some code here to send a notification
-                            pass
+                            utils.add_notif("Schedule", f"It's about time. Prepare to {event}")
             sleep(30)
 
     def track_current_day(self):

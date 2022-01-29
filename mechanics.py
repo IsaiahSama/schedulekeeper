@@ -386,9 +386,30 @@ class Schedules:
         """Method used for setting timers."""
 
         print("What are you here for?")
-        resp = inputMenu(choices=["Start a timer", "Set a timer", "Remove a timer"], numbered=True)
+        resp = inputMenu(choices=["Start a timer", "Set a timer", "Stop a timer"], numbered=True) 
+        if resp.lower().startswith("set"):
+            print("What is the duration of the timer (in minutes)? Cannot be more than 120.")
+            duration = inputNum(min=0, max=120)
+            event = inputStr(prompt="What is the name of the event to be ended after this duration?")
+            timer = {"DURATION": duration, "TIMER_NAME": event, "TRACKING": False}
+            self.schedule["TIMER"] = [] if not self.schedule["TIMER"] else self.schedule["TIMER"]
+            self.schedule["TIMER"].append(timer)
+            print("Your timer has been set. You can start it from the Start a Timer option")
 
-        raise NotImplementedError
+        elif resp.lower().startswith("stop"):
+            print("Just close and re-launch this program!")
+        else:
+            if not self.schedule.get("TIMER", None):
+                print("Could not find any timers to start")
+                return False
+            
+            timer_names = [timer['TIMER_NAME'] for timer in self.schedule['TIMER']]
+            print("Which timer would you like to start?")
+            chosen_name = inputMenu(choices=timer_names, numbered=True)
+            chosen_one = [timer for timer in self.schedule['TIMER'] if timer['TIMER_NAME'] == chosen_name][0]
+            chosen_one['TRACKING'] = True
+            self.tracking.append(chosen_one)
+
 
     def save(self):
         """Saves the current schedule to the JSON file"""
@@ -424,8 +445,9 @@ class Schedules:
 
         tracked_daily = [schedule for schedule in self.schedule.get("DAILY", []) if schedule['TRACKING'] == True]
         tracked_weekly = [schedule for schedule in self.schedule.get("WEEKLY", []) if schedule["TRACKING"] == True]
+        tracked_timer = [schedule for schedule in self.schedule.get("TIMER", []) if schedule["TRACKING"] == True]
 
-        self.tracking.extend(tracked_daily + tracked_weekly)
+        self.tracking.extend(tracked_daily + tracked_weekly + tracked_timer)
 
         print("Currently tracking: ", ', '.join([schedule['SCHEDULE_NAME'] for schedule in self.tracking]))
 

@@ -2,6 +2,7 @@
 
 # Imports
 from json import JSONDecodeError, dump, load
+from msilib.schema import File
 from os import system, get_terminal_size
 from os.path import exists
 from random import choice
@@ -281,8 +282,34 @@ class Schedules:
 
     def update(self):
         """Method used to update existing schedules"""
+        if not self.schedule:
+            print("You have no schedules to update.")
+            return False
 
-        raise NotImplementedError
+        self.save()
+        system(f"{config['constants']['filename']}")
+        input("Press enter when you are done")
+
+        data = {}
+
+        try:
+            with open(config['constants']['filename']) as file:
+                data = load(file)
+
+        except FileNotFoundError:
+            print("YOU DELETED THE FILE? Let's assume that was an accident")
+            self.save()
+        except JSONDecodeError:
+            print("You don't know JSON? Try to follow the format I have there please. Breaks otherwise")
+            self.save()
+        
+        if data:
+            print("Press enter to confirm these changes. Else, press ctrl + c")
+            input()
+            print("Alright... Just to make sure... type 'YES!' to confirm these changes")
+            if input(":") != "YES!": print("Didn't think so. Next time maybe"); return False
+            self.schedule = data 
+            self.save()
     
     def delete(self):
         """Method used to delete existing schedules"""

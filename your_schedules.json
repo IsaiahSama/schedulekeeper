@@ -47,5 +47,12 @@
             "ONE-TIME": true,
             "TRACKING": true
         }
+    ],
+    "TIMER": [
+        {
+            "DURATION": 120,
+            "TIMER_NAME": "Complete editing of podcast",
+            "TRACKING": false
+        }
     ]
 }

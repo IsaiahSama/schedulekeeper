@@ -488,7 +488,7 @@ class Schedules:
         while True:
             while not self.tracking: sleep(1)
             for schedule in self.tracking:
-                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items():
+                for time, event in schedule.get("TIMES", {}).items() or schedule.get("DAYS", {}).get(self.current_day, {}).items():
                     if utils.get_current_time() == int(time):
                         # Do some code here to send a notification
                         utils.add_notif("Schedule", f"It's about time. Prepare to {event}")

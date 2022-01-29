@@ -28,6 +28,7 @@ class Utilities:
         prompt_for_schedule_type() - Prompts the user for the type of schedule.
         get_schedule_by_name(name:str, schedules:list) - Gets a schedule from the list of schedules by name
         display_dict(schedule:dict) - Pretty formats a schedule for display
+        get_schedule_list() - Used to get the list of schedule names.
         exit() - Exits the program
     """
 
@@ -85,7 +86,7 @@ class Utilities:
         print("What type of schedules would you like to view?")
         return inputMenu(choices=self.schedule_types)
 
-    def get_schedules_by_name(self, name:str, schedules:list) -> dict:
+    def get_schedule_by_name(self, name:str, schedules:list) -> dict:
         target = [schedule for schedule in schedules if schedule['SCHEDULE_NAME']  == name]
         return target[0]
 
@@ -140,6 +141,26 @@ class Utilities:
                 [print(row) for row in rows]
 
         print(bar)
+
+    def get_schedule_list(self) -> tuple[list, list]:
+        """Method that prompts for input and returns the list of schedule names, and schedules
+        
+        Returns:
+            tuple(schedule_names, schedules)"""
+
+        target = utils.prompt_for_schedule_type()
+        print("Checking...")
+        schedule_list = schedules.schedule.get(target, None)
+        if not schedule_list:
+            print("You have no schedules for this type")
+            return False, False
+
+        schedule_names = [name["SCHEDULE_NAME"] for name in schedule_list]
+        if not schedule_names:
+            print("You have no schedules for this type")
+            return False, False
+
+        return schedule_names, schedule_list
 
     def exit(self):
         """Function used to close the program"""
@@ -259,16 +280,8 @@ class Schedules:
     def view(self):
         """Method used to view created schedules."""
 
-        target = utils.prompt_for_schedule_type()
-        print("Checking...")
-        schedule_list = self.schedule.get(target, None)
-        if not schedule_list:
-            print("You have no schedules for this type")
-            return False 
-
-        schedule_names = [name["SCHEDULE_NAME"] for name in schedule_list]
-        if not schedule_names:
-            print("You have no schedules for this type")
+        schedule_names, schedule_list = utils.get_schedule_list()
+        if not (schedule_names and schedule_list):
             return False
 
         print("Would you like to view a specific schedule? Or all?")
@@ -314,7 +327,33 @@ class Schedules:
     def delete(self):
         """Method used to delete existing schedules"""
 
-        raise NotImplementedError
+        schedule_names, schedule_list = utils.get_schedule_list()
+        if not schedule_names and schedule_list:
+            return False
+
+        todelete = inputMenu(choices=schedule_names, prompt="Which schedule would you like to delete?\n", blank=True)
+
+        if not todelete:
+            print("No deleting then. Returning to main menu")
+            return False
+
+        schedule = utils.get_schedule_by_name(todelete, schedule_list)
+        utils.display_dict(schedule)
+        print("Are you sure you want to delete this schedule?")
+        resp = inputYesNo()
+        if resp == "yes":
+            print("Final chance. Press ctrl + c to abort.")
+            print("To confirm, what is the type of schedule you want to delete?")
+            target = utils.prompt_for_schedule_type()
+            if not [sched for sched in self.schedule[target] if sched['SCHEDULE_NAME'] == todelete]:
+                print("WRONG!")
+                return False
+            schedule_list.remove(schedule)
+            self.schedule[target] = schedule_list
+            self.save()
+            print("Successfully deleted")            
+        else:
+            print("May have been for the best!")
 
     def timer(self):
         """Method used for setting timers."""

@@ -385,6 +385,9 @@ class Schedules:
     def timer(self):
         """Method used for setting timers."""
 
+        print("What are you here for?")
+        resp = inputMenu(choices=["Start a timer", "Set a timer", "Remove a timer"], numbered=True)
+
         raise NotImplementedError
 
     def save(self):
@@ -431,9 +434,9 @@ class Schedules:
             for schedule in self.tracking:
                 for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items():
                     if utils.get_current_time() == int(time):
-                        print(f"It's time for {event} to BEGIN!")
+                        # print(f"It's time for {event} to BEGIN!")
                         # Do some code here to send a notification
-                    
+                        pass
             sleep(30)
 
     def track_current_day(self):

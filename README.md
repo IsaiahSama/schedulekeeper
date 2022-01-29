@@ -46,9 +46,15 @@ Schedules will be stored in the following format:
             "TRACKING": "bool (True or False)" 
         }
     ],
-    "TIMER": {
-        "Duration_of_event_in_minutes": "name_of_event",
-        "30": "game"
-    }
+    "TIMER": [
+        {
+            "Duration_of_timer_in_minutes": "mesage",
+            "TRACKING": "True or false (bool)"
+        },
+        {
+            "30": "time to sleep"
+            "TRACKING": false
+        }
+    ]
 }
 ```

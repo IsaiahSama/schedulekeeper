@@ -48,11 +48,13 @@ Schedules will be stored in the following format:
     ],
     "TIMER": [
         {
-            "Duration_of_timer_in_minutes": "mesage",
+            "name_of_timer": "timer name"
+            "Duration_of_timer_in_minutes": 20,
             "TRACKING": "True or false (bool)"
         },
         {
-            "30": "time to sleep"
+            "name_of_timer": "time to sleep",
+            "duration": 30,
             "TRACKING": false
         }
     ]

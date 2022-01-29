@@ -37,22 +37,21 @@
             "TRACKING": true
         }
     ],
-    "ONE-TIME": [
-        {
-            "TIMES": {
-                "510": "Call this project a success for now",
-                "511": "Call this project a success for now end"
-            },
-            "SCHEDULE_NAME": "just a brief test",
-            "ONE-TIME": true,
-            "TRACKING": true
-        }
-    ],
     "TIMER": [
         {
             "DURATION": 120,
-            "TIMER_NAME": "Complete editing of podcast",
+            "TIMER_NAME": "No more games",
             "TRACKING": false
+        },
+        {
+            "DURATION": 60,
+            "TIMER_NAME": "Stop gaming",
+            "TRACKING": false
+        },
+        {
+            "DURATION": 20,
+            "TIMER_NAME": "stay focused",
+            "TRACKING": true
         }
     ]
 }

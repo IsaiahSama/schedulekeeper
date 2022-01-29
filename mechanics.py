@@ -358,13 +358,13 @@ class Schedules:
             return False
 
         self.save()
-        system(f"{config['constants']['filename']}")
+        system(f"{config['variables']['filename']}")
         input("Press enter when you are done")
 
         data = {}
 
         try:
-            with open(config['constants']['filename']) as file:
+            with open(config['variables']['filename']) as file:
                 data = load(file)
 
         except FileNotFoundError:
@@ -441,17 +441,16 @@ class Schedules:
             if not chosen_name:
                 print("Nothing was provided")
                 return False
-            chosen_one = [timer for timer in self.schedule['TIMER'] if timer['TIMER_NAME'] == chosen_name][0]
+            chosen_one = [timer for timer in self.schedule['TIMER'] if timer['TIMER_NAME'] == chosen_name][0].copy()
             chosen_one['TRACKING'] = True
             self.tracking.append(chosen_one)
-            utils.add_notif("Timer", f"Your {chosen_one['DURATION']} timer has begun")
-
+            utils.add_notif("Timer", f"Your {chosen_one['DURATION']} minute timer has begun")
 
 
     def save(self):
         """Saves the current schedule to the JSON file"""
 
-        with open(config['constants']['filename'], "w") as file:
+        with open(config['variables']['filename'], "w") as file:
             dump(self.schedule, file, indent=4)
 
     def load(self):
@@ -460,7 +459,7 @@ class Schedules:
         data = None
 
         try:
-            with open(config['constants']['filename']) as file:
+            with open(config['variables']['filename']) as file:
                 data = load(file)
         except JSONDecodeError as err:
             print("An error has occurred.", err)
@@ -486,7 +485,7 @@ class Schedules:
 
         self.tracking.extend(tracked_daily + tracked_weekly + tracked_timer)
 
-        print("Currently tracking: ", ', '.join([schedule['SCHEDULE_NAME'] for schedule in self.tracking]))
+        print("Currently tracking: ", ', '.join([schedule.get("SCHEDULE_NAME", schedule.get("TIMER_NAME")) for schedule in self.tracking]))
 
         while True:
             while not self.tracking: sleep(1)
@@ -497,10 +496,18 @@ class Schedules:
                         utils.add_notif("Schedule", f"It's about time. Prepare to {event}")
 
                 if schedule.get("TIMER_NAME"):
+                    event = schedule["TIMER_NAME"]
                     schedule['DURATION'] -= 0.5
                     if schedule['DURATION'] == 0:
                         # Do some code here to send a notification
                         utils.add_notif("Timer", f"The timer set for {event} is now over.")
+                        try:
+                            og_time = [schedule['DURATION'] for schedule in self.schedule['TIMER'] if schedule['TIMER_NAME'] == event and schedule['TRACKING'] == True]
+                            if og_time:
+                                schedule['DURATION'] = og_time
+                                utils.add_notif("Timer", f"Restarting your {og_time} minute timer of {event}")
+                        except:
+                            pass
             sleep(30)
 
     def track_current_day(self):

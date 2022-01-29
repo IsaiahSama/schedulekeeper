@@ -33,8 +33,8 @@
                     "1800": "French end"
                 }
             },
-            "SCHEDULE_NAME": "School lol"
+            "SCHEDULE_NAME": "School",
+            "TRACKING": true
         }
-    ],
-    "DAILY": []
+    ]
 }

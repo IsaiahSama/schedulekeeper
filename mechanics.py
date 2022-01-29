@@ -5,13 +5,14 @@ from json import JSONDecodeError, dump, load
 from msilib.schema import File
 from os import system, get_terminal_size
 from os.path import exists
-from random import choice
+from re import compile
+from threading import Thread
 from pyttsx3 import init
 from plyer import notification
 from bs4 import BeautifulSoup
 from requests import get
 from config import config
-from time import sleep
+from time import sleep, ctime
 from pyinputplus import inputMenu, inputStr, inputNum, inputYesNo
 
 class Utilities:
@@ -20,6 +21,7 @@ class Utilities:
     Attributes:
         days_of_the_week (list): A list of the days of the week
         schedule_types (list): A list of the valid schedule types
+        time_pattern (str): The pattern used to select the current time 
     
     Methods:
         clrs(msg:str="") - Clears the screen and then displays a message
@@ -28,12 +30,15 @@ class Utilities:
         prompt_for_schedule_type() - Prompts the user for the type of schedule.
         get_schedule_by_name(name:str, schedules:list) - Gets a schedule from the list of schedules by name
         display_dict(schedule:dict) - Pretty formats a schedule for display
+        get_current_day() - Gets the current day
+        get_current_time() - Gets the current time
         get_schedule_list() - Used to get the list of schedule names.
         exit() - Exits the program
     """
 
     days_of_the_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     schedule_types = ["ONE-TIME", "WEEKLY", "DAILY", "TIMER"]
+    time_pattern = compile(r"[0-2][0-9]:[0-5][0-9]")
 
     def clrs(self, msg:str=""):
         """Method used to display a message after clearing the screen of all current text
@@ -152,7 +157,7 @@ class Utilities:
         print("Checking...")
         schedule_list = schedules.schedule.get(target, None)
         if target == "ONE-TIME": 
-            schedule_list = schedules.get("DAILY", [])
+            schedule_list = schedules.schedule.get("DAILY", [])
             schedule_list = [schedule for schedule in schedule_list if schedule['ONE-TIME'] == True]
         if not schedule_list:
             print("You have no schedules for this type")
@@ -164,6 +169,16 @@ class Utilities:
             return False, False
 
         return schedule_names, schedule_list
+
+    def get_current_day(self) -> str:
+        """Gets the current day"""
+        return ctime().split(" ")[0]
+
+    def get_current_time(self) -> str:
+        """Gets the current time"""
+        current_time = self.time_pattern.findall(ctime())[0]
+        return int(''.join(current_time.split(":")))
+
 
     def exit(self):
         """Function used to close the program"""
@@ -178,6 +193,7 @@ class Schedules:
     Attributes:
         schedule (dict): Instance of the current schedule as retrieved from the JSON file
         tracking (list[dict]): A list of schedules that are to be tracked
+        current_day (str): The Current Day
         
     Methods:
         create() - Used to create a new schedule
@@ -189,11 +205,14 @@ class Schedules:
         delete() - Used to remove a schedule from memory
         save() - Saves the schedule to the JSON file
         load() - Used to load the schedule from the JSON file
+        start_threads() - Begins all threads
         track() - Used to track schedules. Threaded
+        track_current_day() - Used to track the current day
     """
 
     schedule = {}
     tracking = []
+    current_day = ''
 
     def create(self):
         """Method used to create a new schedule, and save it."""
@@ -216,12 +235,14 @@ class Schedules:
         schedule["SCHEDULE_NAME"] = name
         schedule["ONE-TIME"] = True if response == "ONE-TIME" else False
         if response == "WEEKLY": del schedule['ONE-TIME']
+        schedule['TRACKING'] = True
         try:
             self.schedule[response]
         except KeyError:
             self.schedule[response] = []
         utils.display_dict(schedule)
         self.schedule[response].append(schedule)
+        self.tracking.append(schedule)
         self.save()
 
 
@@ -249,7 +270,6 @@ class Schedules:
         print("Finalizing")
 
         schedule["TIMES"] = times
-        schedule['TRACKING'] = True
         return schedule
 
     def create_weekly(self) -> dict:
@@ -390,13 +410,36 @@ class Schedules:
             print("Successfully loaded your schedule into memory")
             self.schedule = data
 
+    def start_threads(self):
+        """Method used to start all threads that the script uses."""
+
+        threads = [Thread(target=self.track, daemon=True), Thread(target=self.track_current_day, daemon=True)]
+        [thread.start() for thread in threads]
+
     def track(self):
         """Threaded Function used to keep track of schedules"""
+
+        tracked_daily = [schedule for schedule in self.schedule.get("DAILY", []) if schedule['TRACKING'] == True]
+        tracked_weekly = [schedule for schedule in self.schedule.get("WEEKLY", []) if schedule["TRACKING"] == True]
+
+        self.tracking.extend(tracked_daily + tracked_weekly)
+
+        print("Currently tracking: ", ', '.join([schedule['SCHEDULE_NAME'] for schedule in self.tracking]))
 
         while True:
             while not self.tracking: sleep(1)
             for schedule in self.tracking:
-                pass
+                for time, event in schedule.get("TIMES", {}).items() or schedule['DAYS'].get(self.current_day, {}).items():
+                    if utils.get_current_time() == int(time):
+                        print(f"It's time for {event} to BEGIN!")
+                        # Do some code here to send a notification
+                    
+            sleep(30)
+
+    def track_current_day(self):
+        while True:
+            self.current_day = utils.get_current_day()
+            sleep(60 * 60)
 
 
 utils = Utilities()

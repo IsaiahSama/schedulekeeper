@@ -33,6 +33,9 @@ class Main:
         # Attempts to load the user's schedule into memory if it exists
         schedules.load()
 
+        # Begins the threads
+        schedules.start_threads()
+
         input("Press enter to continue")
         # Infinite loop to run the main menu
 

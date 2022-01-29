@@ -420,10 +420,11 @@ class Schedules:
         if resp.lower().startswith("set"):
             print("What is the duration of the timer (in minutes)? Cannot be more than 120.")
             duration = inputNum(min=0, max=120)
-            event = inputStr(prompt="What is the name of the event to be ended after this duration?")
+            event = inputStr(prompt="What is the name of the event to be ended after this duration?\n")
             timer = {"DURATION": duration, "TIMER_NAME": event, "TRACKING": False}
-            self.schedule["TIMER"] = [] if not self.schedule["TIMER"] else self.schedule["TIMER"]
+            self.schedule["TIMER"] = [] if not self.schedule.get("TIMER", None) else self.schedule["TIMER"]
             self.schedule["TIMER"].append(timer)
+            self.save()
             print("Your timer has been set. You can start it from the Start a Timer option")
 
         elif resp.lower().startswith("stop"):
@@ -435,7 +436,10 @@ class Schedules:
             
             timer_names = [timer['TIMER_NAME'] for timer in self.schedule['TIMER']]
             print("Which timer would you like to start?")
-            chosen_name = inputMenu(choices=timer_names, numbered=True)
+            chosen_name = inputMenu(choices=timer_names, numbered=True, blank=True)
+            if not chosen_name:
+                print("Nothing was provided")
+                return False
             chosen_one = [timer for timer in self.schedule['TIMER'] if timer['TIMER_NAME'] == chosen_name][0]
             chosen_one['TRACKING'] = True
             self.tracking.append(chosen_one)

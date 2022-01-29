@@ -54,7 +54,7 @@ class Main:
             self.menu_options[response]()
         except KeyError as err:
             print("An invalid response was provided", err)
-        except AttributeError as err:
+        except NotImplementedError as err:
             print("The task that you have attempted to use, does not yet exist or is a work in progress", err)
         
         input("Press enter to continue")

@@ -282,17 +282,17 @@ class Schedules:
     def update(self):
         """Method used to update existing schedules"""
 
-        raise AttributeError
+        raise NotImplementedError
     
     def delete(self):
         """Method used to delete existing schedules"""
 
-        raise AttributeError
+        raise NotImplementedError
 
     def timer(self):
         """Method used for setting timers."""
 
-        raise AttributeError
+        raise NotImplementedError
 
     def save(self):
         """Saves the current schedule to the JSON file"""

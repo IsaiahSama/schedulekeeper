@@ -151,6 +151,9 @@ class Utilities:
         target = utils.prompt_for_schedule_type()
         print("Checking...")
         schedule_list = schedules.schedule.get(target, None)
+        if target == "ONE-TIME": 
+            schedule_list = schedules.get("DAILY", [])
+            schedule_list = [schedule for schedule in schedule_list if schedule['ONE-TIME'] == True]
         if not schedule_list:
             print("You have no schedules for this type")
             return False, False

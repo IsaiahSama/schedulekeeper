@@ -1,11 +1,12 @@
 ---
 
 constants:
-  filename: "your_schedules.json"
   version: "reborn"
 
 # Feel free to change the values Below here to suit your wants
 variables:
+  # The name of the file where your schedules will be stored
+  filename: "your_schedules.json"
   username: "User"
   # Voice is the voice to use when speaking messages. 1 is female, 0 is Male
   voice: 1

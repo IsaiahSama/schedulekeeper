@@ -174,21 +174,23 @@ class Schedules:
     
     Attributes:
         schedule (dict): Instance of the current schedule as retrieved from the JSON file
+        tracking (list[dict]): A list of schedules that are to be tracked
         
     Methods:
         create() - Used to create a new schedule
         create_daily() - Creates a new daily schedule.
         create_weekly() - Creates a new Weekly schedules.
-        create_one_time() - Creates a new one time schedule.
         timer() - Creates a timer for a task.
         view() - Used to view a created schedule
         update() - Used to update an existing schedule
         delete() - Used to remove a schedule from memory
         save() - Saves the schedule to the JSON file
         load() - Used to load the schedule from the JSON file
+        track() - Used to track schedules. Threaded
     """
 
     schedule = {}
+    tracking = []
 
     def create(self):
         """Method used to create a new schedule, and save it."""
@@ -209,6 +211,8 @@ class Schedules:
             return False
         
         schedule["SCHEDULE_NAME"] = name
+        schedule["ONE-TIME"] = True if response == "ONE-TIME" else False
+        if response == "WEEKLY": del schedule['ONE-TIME']
         try:
             self.schedule[response]
         except KeyError:
@@ -265,7 +269,7 @@ class Schedules:
                 start_time, end_time = utils.prompt_for_time()
                 event = inputStr(prompt="What event would you like to do during this time?\n")
                 schedule["DAYS"][day][str(start_time)] = event
-                schedule['DAYS'][day][str(end_time)] = event + " end"
+                schedule['DAYS'][day][str(end_time)] = "end " + event
                 
                 resp = inputYesNo(prompt=f"Would you like to add another time for {day}\n")
                 if resp == 'no': break
@@ -382,6 +386,15 @@ class Schedules:
         if data:
             print("Successfully loaded your schedule into memory")
             self.schedule = data
+
+    def track(self):
+        """Threaded Function used to keep track of schedules"""
+
+        while True:
+            while not self.tracking: sleep(1)
+            for schedule in self.tracking:
+                pass
+
 
 utils = Utilities()
 schedules = Schedules()

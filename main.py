@@ -48,8 +48,8 @@ class Main:
         response = inputMenu(choices=list(self.menu_options.keys()), prompt="Simply select from the following options\n", numbered=True)
         try:
             self.menu_options[response]()
-        except KeyError:
-            print("An invalid response was provided")
+        except KeyError as err:
+            print("An invalid response was provided", err)
         except AttributeError as err:
             print("The task that you have attempted to use, does not yet exist or is a work in progress", err)
         

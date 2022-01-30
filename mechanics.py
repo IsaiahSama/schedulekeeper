@@ -481,7 +481,7 @@ class Schedules:
 
         tracked_daily = [schedule for schedule in self.schedule.get("DAILY", []) if schedule['TRACKING'] == True]
         tracked_weekly = [schedule for schedule in self.schedule.get("WEEKLY", []) if schedule["TRACKING"] == True]
-        tracked_timer = [schedule for schedule in self.schedule.get("TIMER", []) if schedule["TRACKING"] == True]
+        tracked_timer = [schedule.copy() for schedule in self.schedule.get("TIMER", []) if schedule["TRACKING"] == True]
 
         self.tracking.extend(tracked_daily + tracked_weekly + tracked_timer)
 
@@ -504,7 +504,7 @@ class Schedules:
                         try:
                             og_time = [schedule['DURATION'] for schedule in self.schedule['TIMER'] if schedule['TIMER_NAME'] == event and schedule['TRACKING'] == True]
                             if og_time:
-                                schedule['DURATION'] = og_time
+                                schedule['DURATION'] = og_time[0]
                                 utils.add_notif("Timer", f"Restarting your {og_time} minute timer of {event}")
                         except:
                             pass
